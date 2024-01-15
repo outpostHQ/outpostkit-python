@@ -3,8 +3,8 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "outpost"
-version = "0.1.0"
+name = "outpostkit"
+version = "0.0.1"
 description = "Python client for Outpost"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -28,7 +28,7 @@ optional-dependencies = { dev = [
 
 [project.urls]
 homepage = "https://outpost.run"
-repository = "https://github.com/outposthq/outpost-python"
+repository = "https://github.com/outposthq/outpostkit-python"
 
 [tool.pytest.ini_options]
 testpaths = "tests/"

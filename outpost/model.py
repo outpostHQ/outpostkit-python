@@ -118,7 +118,7 @@ class Model(Resource):
         """
 
         raise OutpostException(
-            "The `model.predict()` method has been removed, because it's unstable: if a new version of the model you're using is pushed and its API has changed, your code may break. Use `outpost.run()` instead. See https://github.com/outposthq/outpost-python#readme"
+            "The `model.predict()` method has been removed, because it's unstable: if a new version of the model you're using is pushed and its API has changed, your code may break. Use `outpost.run()` instead. See https://github.com/outposthq/outpostkit-python#readme"
         )
 
     @property
