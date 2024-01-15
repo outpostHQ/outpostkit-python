@@ -20,9 +20,11 @@ from typing_extensions import Unpack
 
 from outpost.__about__ import __version__
 from outpost.collection import Collections
+from outpost.constants import BASE_API_URL
 from outpost.deployment import Deployments
 from outpost.exceptions import OutpostError
 from outpost.hardware import HardwareNamespace as Hardware
+from outpost.inference import Inferences
 from outpost.model import Models
 from outpost.prediction import Predictions
 from outpost.run import async_run, run
@@ -43,7 +45,7 @@ class Client:
         self,
         api_token: Optional[str] = None,
         *,
-        base_url: Optional[str] = None,
+        base_url: Optional[str] = BASE_API_URL,
         timeout: Optional[httpx.Timeout] = None,
         **kwargs,
     ) -> None:
@@ -98,6 +100,13 @@ class Client:
         Namespace for operations related to collections of models.
         """
         return Collections(client=self)
+
+    @property
+    def inferences(self) -> Inferences:
+        """
+        Namespace for operations related to collections of models.
+        """
+        return Inferences(client=self)
 
     @property
     def deployments(self) -> Deployments:
@@ -326,7 +335,7 @@ def _build_httpx_client(
     if (
         api_token := api_token or os.environ.get("OUTPOST_API_TOKEN")
     ) and api_token != "":
-        headers["Authorization"] = f"Token {api_token}"
+        headers["Authorization"] = f"Bearer {api_token}"
 
     base_url = (
         base_url or os.environ.get("OUTPOST_BASE_URL") or "https://api.outpost.run"
