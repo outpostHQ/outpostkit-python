@@ -34,10 +34,10 @@ repository = "https://github.com/outposthq/outpostkit-python"
 testpaths = "tests/"
 
 [tool.setuptools]
-packages = ["outpost"]
+packages = ["outpostkit"]
 
 [tool.setuptools.package-data]
-"outpost" = ["py.typed"]
+"outpostkit" = ["py.typed"]
 
 [tool.pylint.main]
 disable = [
