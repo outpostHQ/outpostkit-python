@@ -20,7 +20,7 @@ from typing_extensions import Unpack
 
 from outpostkit.__about__ import __version__
 from outpostkit.collection import Collections
-from outpostkit.constants import BASE_API_URL
+from outpostkit.constants import V1_API_URL
 from outpostkit.deployment import Deployments
 from outpostkit.exceptions import OutpostError
 from outpostkit.hardware import HardwareNamespace as Hardware
@@ -45,7 +45,7 @@ class Client:
         self,
         api_token: Optional[str] = None,
         *,
-        base_url: Optional[str] = BASE_API_URL,
+        base_url: Optional[str] = V1_API_URL,
         timeout: Optional[httpx.Timeout] = None,
         **kwargs,
     ) -> None:
@@ -93,6 +93,15 @@ class Client:
         _raise_for_status(resp)
 
         return resp
+
+    @property
+    def _user(self)->Dict[str,Any]:
+        """
+        Get Current User
+        Returns: the current user details.
+        """
+        resp = self._client.request('GET','/user')
+        return resp.json()
 
     @property
     def collections(self) -> Collections:
@@ -364,4 +373,4 @@ def _build_httpx_client(
 
 def _raise_for_status(resp: httpx.Response) -> None:
     if 400 <= resp.status_code < 600:
-        raise OutpostError(resp.json()["detail"])
+        raise OutpostError(resp.json()["message"])

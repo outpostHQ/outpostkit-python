@@ -57,7 +57,7 @@ class Inferences(Namespace):
         Returns:
             List[Inference]: A page of of model inferences.WW
         """
-        resp = self._client._request("GET", f"/v1/inferences/{entity}")
+        resp = self._client._request("GET", f"/inferences/{entity}")
 
         obj = resp.json()
         obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
@@ -76,7 +76,7 @@ class Inferences(Namespace):
         Returns:
             List[Inference]: A page of of model inferences.WW
         """
-        resp = await self._client._async_request("GET", f"/v1/inferences/{entity}")
+        resp = await self._client._async_request("GET", f"/inferences/{entity}")
 
         obj = resp.json()
         obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
@@ -92,7 +92,7 @@ class Inferences(Namespace):
             The model.
         """
 
-        resp = self._client._request("GET", f"/v1/inferences/{slug}")
+        resp = self._client._request("GET", f"/inferences/{slug}")
 
         return _json_to_inference(resp.json())
 
@@ -105,7 +105,7 @@ class Inferences(Namespace):
             The model.
         """
 
-        resp = await self._client._async_request("GET", f"/v1/inferences/{slug}")
+        resp = await self._client._async_request("GET", f"/inferences/{slug}")
 
         return _json_to_inference(resp.json())
 
