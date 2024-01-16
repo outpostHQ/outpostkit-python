@@ -55,14 +55,14 @@ class Inferences(Namespace):
         Parameters:
             entity: The entity whos inferences you want to list.
         Returns:
-            List[Inference]: A page of of model inferences.WW
+            List[Inference]: A page of of model inferences.
         """
         resp = self._client._request("GET", f"/inferences/{entity}")
 
         obj = resp.json()
-        obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
+        inferences = [_json_to_inference(result) for result in obj["inferences"]]
 
-        return Page[Inference](**obj)
+        return inferences
 
     async def async_list(
         self,

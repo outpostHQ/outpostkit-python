@@ -24,3 +24,5 @@ models = default_client.models
 predictions = default_client.predictions
 trainings = default_client.trainings
 inferences =  default_client.inferences
+
+__version__ = '0.0.5'
