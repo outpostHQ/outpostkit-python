@@ -16,7 +16,7 @@ try:
 except ImportError:
     import pydantic  # type: ignore
 
-from outpost.resource import Resource
+from outpostkit.resource import Resource
 
 T = TypeVar("T", bound=Resource)
 

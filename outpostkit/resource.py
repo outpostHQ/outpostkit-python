@@ -7,7 +7,7 @@ except ImportError:
     import pydantic  # type: ignore
 
 if TYPE_CHECKING:
-    from outpost.client import Client
+    from outpostkit.client import Client
 
 
 class Resource(pydantic.BaseModel):  # type: ignore

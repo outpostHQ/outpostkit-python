@@ -2,8 +2,8 @@ import re
 from typing import TYPE_CHECKING, NamedTuple, Optional, Tuple, Union
 
 if TYPE_CHECKING:
-    from outpost.model import Model
-    from outpost.version import Version
+    from outpostkit.model import Model
+    from outpostkit.version import Version
 
 
 class ModelVersionIdentifier(NamedTuple):
@@ -33,8 +33,8 @@ class ModelVersionIdentifier(NamedTuple):
 def _resolve(
     ref: Union["Model", "Version", "ModelVersionIdentifier", str]
 ) -> Tuple[Optional["Version"], Optional[str], Optional[str], Optional[str]]:
-    from outpost.model import Model  # pylint: disable=import-outside-toplevel
-    from outpost.version import Version  # pylint: disable=import-outside-toplevel
+    from outpostkit.model import Model  # pylint: disable=import-outside-toplevel
+    from outpostkit.version import Version  # pylint: disable=import-outside-toplevel
 
     version = None
     owner, name, version_id = None, None, None

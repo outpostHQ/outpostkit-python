@@ -2,11 +2,11 @@ import datetime
 from typing import TYPE_CHECKING, Any, Dict, Tuple, Union
 
 if TYPE_CHECKING:
-    from outpost.client import Client
-    from outpost.model import Model
+    from outpostkit.client import Client
+    from outpostkit.model import Model
 
-from outpost.pagination import Page
-from outpost.resource import Namespace, Resource
+from outpostkit.pagination import Page
+from outpostkit.resource import Namespace, Resource
 
 
 class Version(Resource):
@@ -36,7 +36,7 @@ class Versions(Namespace):
     ) -> None:
         super().__init__(client=client)
 
-        from outpost.model import Model  # pylint: disable=import-outside-toplevel
+        from outpostkit.model import Model  # pylint: disable=import-outside-toplevel
 
         if isinstance(model, Model):
             self.model = (model.owner, model.name)

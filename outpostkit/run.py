@@ -2,17 +2,17 @@ from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Optional, Union
 
 from typing_extensions import Unpack
 
-from outpost import identifier
-from outpost.exceptions import ModelError
-from outpost.model import Model
-from outpost.prediction import Prediction
-from outpost.schema import make_schema_backwards_compatible
-from outpost.version import Version, Versions
+from outpostkit import identifier
+from outpostkit.exceptions import ModelError
+from outpostkit.model import Model
+from outpostkit.prediction import Prediction
+from outpostkit.schema import make_schema_backwards_compatible
+from outpostkit.version import Version, Versions
 
 if TYPE_CHECKING:
-    from outpost.client import Client
-    from outpost.identifier import ModelVersionIdentifier
-    from outpost.prediction import Predictions
+    from outpostkit.client import Client
+    from outpostkit.identifier import ModelVersionIdentifier
+    from outpostkit.prediction import Predictions
 
 
 def run(

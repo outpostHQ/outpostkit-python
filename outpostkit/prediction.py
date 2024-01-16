@@ -5,13 +5,13 @@ from typing import TYPE_CHECKING, Any, Dict, Iterator, List, Literal, Optional, 
 
 from typing_extensions import NotRequired, TypedDict, Unpack
 
-from outpost.exceptions import ModelError, OutpostError
-from outpost.files import upload_file
-from outpost.json import encode_json
-from outpost.pagination import Page
-from outpost.resource import Namespace, Resource
-from outpost.stream import EventSource
-from outpost.version import Version
+from outpostkit.exceptions import ModelError, OutpostError
+from outpostkit.files import upload_file
+from outpostkit.json import encode_json
+from outpostkit.pagination import Page
+from outpostkit.resource import Namespace, Resource
+from outpostkit.stream import EventSource
+from outpostkit.version import Version
 
 try:
     from pydantic import v1 as pydantic  # type: ignore
@@ -19,8 +19,8 @@ except ImportError:
     import pydantic  # type: ignore
 
 if TYPE_CHECKING:
-    from outpost.client import Client
-    from outpost.stream import ServerSentEvent
+    from outpostkit.client import Client
+    from outpostkit.stream import ServerSentEvent
 
 
 class Prediction(Resource):

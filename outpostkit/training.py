@@ -13,13 +13,13 @@ from typing import (
 
 from typing_extensions import NotRequired, Unpack
 
-from outpost.files import upload_file
-from outpost.identifier import ModelVersionIdentifier
-from outpost.json import encode_json
-from outpost.model import Model
-from outpost.pagination import Page
-from outpost.resource import Namespace, Resource
-from outpost.version import Version
+from outpostkit.files import upload_file
+from outpostkit.identifier import ModelVersionIdentifier
+from outpostkit.json import encode_json
+from outpostkit.model import Model
+from outpostkit.pagination import Page
+from outpostkit.resource import Namespace, Resource
+from outpostkit.version import Version
 
 try:
     from pydantic import v1 as pydantic  # type: ignore
@@ -27,7 +27,7 @@ except ImportError:
     import pydantic  # type: ignore
 
 if TYPE_CHECKING:
-    from outpost.client import Client
+    from outpostkit.client import Client
 
 
 class Training(Resource):

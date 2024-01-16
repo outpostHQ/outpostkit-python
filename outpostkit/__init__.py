@@ -1,8 +1,8 @@
 import os
 
-from outpost.client import Client
-from outpost.pagination import async_paginate as _async_paginate
-from outpost.pagination import paginate as _paginate
+from outpostkit.client import Client
+from outpostkit.pagination import async_paginate as _async_paginate
+from outpostkit.pagination import paginate as _paginate
 
 default_client = Client(
     api_token=os.environ.get("OUTPOST_API_TOKEN")

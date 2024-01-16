@@ -12,8 +12,8 @@ from typing import (
 
 from typing_extensions import Unpack
 
-from outpost import identifier
-from outpost.exceptions import OutpostError
+from outpostkit import identifier
+from outpostkit.exceptions import OutpostError
 
 try:
     from pydantic import v1 as pydantic  # type: ignore
@@ -24,11 +24,11 @@ except ImportError:
 if TYPE_CHECKING:
     import httpx
 
-    from outpost.client import Client
-    from outpost.identifier import ModelVersionIdentifier
-    from outpost.model import Model
-    from outpost.prediction import Predictions
-    from outpost.version import Version
+    from outpostkit.client import Client
+    from outpostkit.identifier import ModelVersionIdentifier
+    from outpostkit.model import Model
+    from outpostkit.prediction import Predictions
+    from outpostkit.version import Version
 
 
 class ServerSentEvent(pydantic.BaseModel):  # type: ignore

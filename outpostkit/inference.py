@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, TypedDict
 
-from outpost.pagination import Page
-from outpost.resource import Namespace, Resource
+from outpostkit.pagination import Page
+from outpostkit.resource import Namespace, Resource
 
 
 class DomainInInference(TypedDict):

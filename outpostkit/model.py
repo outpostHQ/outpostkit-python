@@ -2,16 +2,16 @@ from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, Tuple, Union
 
 from typing_extensions import NotRequired, TypedDict, Unpack, deprecated
 
-from outpost.exceptions import OutpostException
-from outpost.identifier import ModelVersionIdentifier
-from outpost.pagination import Page
-from outpost.prediction import (
+from outpostkit.exceptions import OutpostException
+from outpostkit.identifier import ModelVersionIdentifier
+from outpostkit.pagination import Page
+from outpostkit.prediction import (
     Prediction,
     _create_prediction_body,
     _json_to_prediction,
 )
-from outpost.resource import Namespace, Resource
-from outpost.version import Version, Versions
+from outpostkit.resource import Namespace, Resource
+from outpostkit.version import Version, Versions
 
 try:
     from pydantic import v1 as pydantic  # type: ignore
@@ -20,8 +20,8 @@ except ImportError:
 
 
 if TYPE_CHECKING:
-    from outpost.client import Client
-    from outpost.prediction import Predictions
+    from outpostkit.client import Client
+    from outpostkit.prediction import Predictions
 
 
 class Model(Resource):

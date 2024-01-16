@@ -2,9 +2,9 @@ from typing import Any, Dict, Iterator, List, Optional, Union, overload
 
 from typing_extensions import deprecated
 
-from outpost.model import Model
-from outpost.pagination import Page
-from outpost.resource import Namespace, Resource
+from outpostkit.model import Model
+from outpostkit.pagination import Page
+from outpostkit.resource import Namespace, Resource
 
 
 class Collection(Resource):

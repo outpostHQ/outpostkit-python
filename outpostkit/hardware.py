@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, Dict, List
 
 from typing_extensions import deprecated
 
-from outpost.resource import Namespace, Resource
+from outpostkit.resource import Namespace, Resource
 
 if TYPE_CHECKING:
     pass

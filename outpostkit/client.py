@@ -18,21 +18,21 @@ from typing import (
 import httpx
 from typing_extensions import Unpack
 
-from outpost.__about__ import __version__
-from outpost.collection import Collections
-from outpost.constants import BASE_API_URL
-from outpost.deployment import Deployments
-from outpost.exceptions import OutpostError
-from outpost.hardware import HardwareNamespace as Hardware
-from outpost.inference import Inferences
-from outpost.model import Models
-from outpost.prediction import Predictions
-from outpost.run import async_run, run
-from outpost.stream import async_stream, stream
-from outpost.training import Trainings
+from outpostkit.__about__ import __version__
+from outpostkit.collection import Collections
+from outpostkit.constants import BASE_API_URL
+from outpostkit.deployment import Deployments
+from outpostkit.exceptions import OutpostError
+from outpostkit.hardware import HardwareNamespace as Hardware
+from outpostkit.inference import Inferences
+from outpostkit.model import Models
+from outpostkit.prediction import Predictions
+from outpostkit.run import async_run, run
+from outpostkit.stream import async_stream, stream
+from outpostkit.training import Trainings
 
 if TYPE_CHECKING:
-    from outpost.stream import ServerSentEvent
+    from outpostkit.stream import ServerSentEvent
 
 
 class Client:
