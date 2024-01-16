@@ -9,7 +9,7 @@ This is a Python client for [Outpost](https://outpost.run). It lets you run mode
 ## Install
 
 ```sh
-pip install outpost
+pip install outpostkit
 ```
 
 ## Authenticate
