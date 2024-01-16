@@ -101,7 +101,9 @@ class Trainings(Namespace):
     Namespace for operations related to trainings.
     """
 
-    def list(self, cursor: Union[str, "ellipsis", None] = ...) -> Page[Training]:  # noqa: F821
+    def list(
+        self, cursor: Union[str, "ellipsis", None] = ...
+    ) -> Page[Training]:  # noqa: F821
         """
         List your trainings.
 

@@ -154,7 +154,9 @@ class Models(Namespace):
 
         return ModelsPredictions(client=self._client)
 
-    def list(self, cursor: Union[str, "ellipsis", None] = ...) -> Page[Model]:  # noqa: F821
+    def list(
+        self, cursor: Union[str, "ellipsis", None] = ...
+    ) -> Page[Model]:  # noqa: F821
         """
         List all public models.
 

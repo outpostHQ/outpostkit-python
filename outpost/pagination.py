@@ -65,7 +65,9 @@ def paginate(
 
 
 async def async_paginate(
-    list_method: Callable[[Union[str, "ellipsis", None]], Awaitable[Page[T]]],  # noqa: F821
+    list_method: Callable[
+        [Union[str, "ellipsis", None]], Awaitable[Page[T]]
+    ],  # noqa: F821
 ) -> AsyncGenerator[Page[T], None]:
     """
     Asynchronously iterate over all items using the provided list method.

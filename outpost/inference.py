@@ -5,10 +5,11 @@ from outpost.resource import Namespace, Resource
 
 
 class DomainInInference(TypedDict):
-    protocol:str
-    name:str
-    apexDomain:str
-    id:str
+    protocol: str
+    name: str
+    apexDomain: str
+    id: str
+
 
 class Inference(Resource):
     """
@@ -56,9 +57,7 @@ class Inferences(Namespace):
         Returns:
             List[Inference]: A page of of model inferences.WW
         """
-        resp = self._client._request(
-            "GET", f"/v1/inferences/{entity}"
-        )
+        resp = self._client._request("GET", f"/v1/inferences/{entity}")
 
         obj = resp.json()
         obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
@@ -77,9 +76,7 @@ class Inferences(Namespace):
         Returns:
             List[Inference]: A page of of model inferences.WW
         """
-        resp = await self._client._async_request(
-            "GET", f"/v1/inferences/{entity}"
-        )
+        resp = await self._client._async_request("GET", f"/v1/inferences/{entity}")
 
         obj = resp.json()
         obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
@@ -133,6 +130,7 @@ class Inferences(Namespace):
         resp = await self._client._async_request(**kwargs)
 
         return resp
+
     async def unawaited_infer(self, **kwargs):
         """Make predictions.
 
@@ -143,8 +141,6 @@ class Inferences(Namespace):
         resp = self._client._async_request(**kwargs)
 
         return resp
-
-
 
 
 def _json_to_inference(json: Dict[str, Any]) -> Inference:

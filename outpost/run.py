@@ -96,9 +96,7 @@ async def async_run(
 def _make_output_iterator(
     version: Version, prediction: Prediction
 ) -> Optional[Iterator[Any]]:
-    schema = make_schema_backwards_compatible(
-        version.openapi_schema
-    )
+    schema = make_schema_backwards_compatible(version.openapi_schema)
     output = schema["components"]["schemas"]["Output"]
     if output.get("type") == "array" == "iterator":
         return prediction.output_iterator()
