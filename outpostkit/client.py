@@ -95,12 +95,12 @@ class Client:
         return resp
 
     @property
-    def _user(self)->Dict[str,Any]:
+    def _user(self) -> Dict[str, Any]:
         """
         Get Current User
         Returns: the current user details.
         """
-        resp = self._client.request('GET','/user')
+        resp = self._client.request("GET", "/user")
         return resp.json()
 
     @property
