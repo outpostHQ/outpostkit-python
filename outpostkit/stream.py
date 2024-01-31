@@ -12,7 +12,6 @@ from typing import (
 
 from typing_extensions import Unpack
 
-from outpostkit import identifier
 from outpostkit.exceptions import OutpostError
 
 try:

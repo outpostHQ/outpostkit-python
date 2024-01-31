@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 
 from outpostkit.pagination import Page
 from outpostkit.resource import Namespace, Resource
@@ -9,6 +9,21 @@ class DomainInInference(TypedDict):
     name: str
     apexDomain: str
     id: str
+
+
+class InferenceHuggingfaceModel(TypedDict):
+    id: str
+    keyId: Optional[str]
+    revision: Optional[str]
+
+
+class InferenceToOutpostModel(TypedDict):
+    fullName: str
+
+
+class InferenceOutpostModel(TypedDict):
+    model: InferenceToOutpostModel
+    revision: Optional[str]
 
 
 class Inference(Resource):
@@ -38,6 +53,45 @@ class Inference(Resource):
     """Config of the inference service."""
 
     domains: List[DomainInInference]
+
+    loadModelWeightsFrom: str
+
+    huggingfaceModel: Optional[InferenceHuggingfaceModel]
+    outpostModel: Optional[InferenceOutpostModel]
+
+    def infer(self, **kwargs):
+        """Make predictions.
+
+        Returns:
+            The prediction.
+        """
+
+        resp = self._client._request(**kwargs)
+        resp.raise_for_status()
+
+        return resp
+
+    async def async_infer(self, **kwargs):
+        """Make predictions.
+
+        Returns:
+            The prediction.
+        """
+
+        resp = await self._client._async_request(**kwargs)
+
+        return resp
+
+    async def unawaited_infer(self, **kwargs):
+        """Make predictions.
+
+        Returns:
+            The prediction.
+        """
+
+        resp = self._client._async_request(**kwargs)
+
+        return resp
 
 
 class Inferences(Namespace):
@@ -108,39 +162,6 @@ class Inferences(Namespace):
         resp = await self._client._async_request("GET", f"/inferences/{slug}")
 
         return _json_to_inference(resp.json())
-
-    def infer(self, **kwargs):
-        """Make predictions.
-
-        Returns:
-            The prediction.
-        """
-
-        resp = self._client._request(**kwargs)
-
-        return resp
-
-    async def async_infer(self, **kwargs):
-        """Make predictions.
-
-        Returns:
-            The prediction.
-        """
-
-        resp = await self._client._async_request(**kwargs)
-
-        return resp
-
-    async def unawaited_infer(self, **kwargs):
-        """Make predictions.
-
-        Returns:
-            The prediction.
-        """
-
-        resp = self._client._async_request(**kwargs)
-
-        return resp
 
 
 def _json_to_inference(json: Dict[str, Any]) -> Inference:
