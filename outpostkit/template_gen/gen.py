@@ -13,10 +13,13 @@ from outpostkit.exceptions import OutpostError
 from outpostkit.template_gen.templates.audio_classification import (
     request_parser as audio_classification_request_parser,
 )
+from outpostkit.template_gen.templates.text_classification import (
+    request_parser as text_classification_request_parser,
+)
 from outpostkit.template_gen.utils.precision import parse_dtype
 from outpostkit.template_gen.utils.repo import clone_outpost_repo
 
-task_type_handlers = {"audio-classification": audio_classification_request_parser}
+task_type_handlers = {"audio-classification": audio_classification_request_parser,"text-classification":text_classification_request_parser}
 
 
 def add_generic_template_args(parser: ArgumentParser) -> ArgumentParser:
