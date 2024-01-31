@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Optional, TypedDict
 
-from outpostkit.pagination import Page
 from outpostkit.resource import Namespace, Resource
 
 
@@ -114,9 +113,9 @@ class Inferences(Namespace):
         resp = self._client._request("GET", f"/inferences/{entity}")
 
         obj = resp.json()
-        inferences = [_json_to_inference(result) for result in obj["inferences"]]
+        obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
 
-        return inferences
+        return obj
 
     async def async_list(
         self,
@@ -135,7 +134,7 @@ class Inferences(Namespace):
         obj = resp.json()
         obj["inferences"] = [_json_to_inference(result) for result in obj["inferences"]]
 
-        return Page[Inference](**obj)
+        return obj
 
     def get(self, slug: str) -> Inference:
         """Get a model by name.

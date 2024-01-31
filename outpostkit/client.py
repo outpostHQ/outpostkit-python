@@ -4,12 +4,9 @@ import time
 from datetime import datetime
 from json import JSONDecodeError
 from typing import (
-    TYPE_CHECKING,
     Any,
-    AsyncIterator,
     Dict,
     Iterable,
-    Iterator,
     Mapping,
     Optional,
     Type,
@@ -17,23 +14,12 @@ from typing import (
 )
 
 import httpx
-from typing_extensions import Unpack
 
 from outpostkit.__about__ import __version__
 from outpostkit.constants import V1_API_URL
-from outpostkit.deployment import Deployments
 from outpostkit.exceptions import OutpostError, OutpostHTTPException
-from outpostkit.hardware import HardwareNamespace as Hardware
 from outpostkit.inference import Inferences
 from outpostkit.logger import outpost_logger
-from outpostkit.model import Models
-from outpostkit.prediction import Predictions
-from outpostkit.run import async_run, run
-from outpostkit.stream import async_stream, stream
-from outpostkit.training import Trainings
-
-if TYPE_CHECKING:
-    from outpostkit.stream import ServerSentEvent
 
 
 class Client:
@@ -110,89 +96,6 @@ class Client:
         Namespace for operations related to collections of models.
         """
         return Inferences(client=self)
-
-    @property
-    def deployments(self) -> Deployments:
-        """
-        Namespace for operations related to deployments.
-        """
-        return Deployments(client=self)
-
-    @property
-    def hardware(self) -> Hardware:
-        """
-        Namespace for operations related to hardware.
-        """
-        return Hardware(client=self)
-
-    @property
-    def models(self) -> Models:
-        """
-        Namespace for operations related to models.
-        """
-        return Models(client=self)
-
-    @property
-    def predictions(self) -> Predictions:
-        """
-        Namespace for operations related to predictions.
-        """
-        return Predictions(client=self)
-
-    @property
-    def trainings(self) -> Trainings:
-        """
-        Namespace for operations related to trainings.
-        """
-        return Trainings(client=self)
-
-    def run(
-        self,
-        ref: str,
-        input: Optional[Dict[str, Any]] = None,
-        **params: Unpack["Predictions.CreatePredictionParams"],
-    ) -> Union[Any, Iterator[Any]]:  # noqa: ANN401
-        """
-        Run a model and wait for its output.
-        """
-
-        return run(self, ref, input, **params)
-
-    async def async_run(
-        self,
-        ref: str,
-        input: Optional[Dict[str, Any]] = None,
-        **params: Unpack["Predictions.CreatePredictionParams"],
-    ) -> Union[Any, Iterator[Any]]:  # noqa: ANN401
-        """
-        Run a model and wait for its output asynchronously.
-        """
-
-        return await async_run(self, ref, input, **params)
-
-    def stream(
-        self,
-        ref: str,
-        input: Optional[Dict[str, Any]] = None,
-        **params: Unpack["Predictions.CreatePredictionParams"],
-    ) -> Iterator["ServerSentEvent"]:
-        """
-        Stream a model's output.
-        """
-
-        return stream(self, ref, input, **params)
-
-    async def async_stream(
-        self,
-        ref: str,
-        input: Optional[Dict[str, Any]] = None,
-        **params: Unpack["Predictions.CreatePredictionParams"],
-    ) -> AsyncIterator["ServerSentEvent"]:
-        """
-        Stream a model's output asynchronously.
-        """
-
-        return async_stream(self, ref, input, **params)
 
 
 # Adapted from https://github.com/encode/httpx/issues/108#issuecomment-1132753155
