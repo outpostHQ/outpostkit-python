@@ -4,7 +4,7 @@ from fastapi import HTTPException, Request
 from pydantic import BaseModel
 from starlette.datastructures import UploadFile
 
-from outpostkit.inference.helpers.form import (
+from outpostkit.template_gen.helpers.form import (
     form_field_to_int,
     form_field_to_json,
 )

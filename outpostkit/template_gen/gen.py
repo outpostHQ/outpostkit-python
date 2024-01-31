@@ -10,13 +10,13 @@ from fastapi.responses import JSONResponse
 from transformers import pipeline as transformers_pipeline
 
 from outpostkit.exceptions import OutpostError
-from outpostkit.inference.templates.audio_classification import (
+from outpostkit.template_gen.templates.audio_classification import (
     request_parser as audio_classification_request_parser,
 )
-from outpostkit.inference.utils.precision import parse_dtype
-from outpostkit.inference.utils.repo import clone_outpost_repo
+from outpostkit.template_gen.utils.precision import parse_dtype
+from outpostkit.template_gen.utils.repo import clone_outpost_repo
 
-task_type_handlers = {"audio_classification": audio_classification_request_parser}
+task_type_handlers = {"audio-classification": audio_classification_request_parser}
 
 
 def add_generic_template_args(parser: ArgumentParser) -> ArgumentParser:
@@ -58,6 +58,7 @@ def add_generic_template_args(parser: ArgumentParser) -> ArgumentParser:
     )
     parser.add_argument("--revision", type=str, default=None)
     parser.add_argument("--kwargs", type=json.loads, default=None, help="kwargs")
+    parser.add_argument("--model-kwargs", type=json.loads, default=None, help="kwargs")
     parser.add_argument("--task-type", type=str, default=None, help="task type")
     parser.add_argument("--model-store", type=str, default="/model", help="task type")
     parser.add_argument("--device-map", type=str, default="auto", help="device-map")
@@ -70,7 +71,7 @@ def create_template_class_from_args(parser: ArgumentParser):
         print("ignoring unknown arguements: ", unknown)
     model_dir: str
     init_f = None
-    if args.loadsource == "huggingface":
+    if args.load_source == "huggingface":
         model_dir = args.model_name
 
         def init_funct(self):
@@ -85,10 +86,10 @@ def create_template_class_from_args(parser: ArgumentParser):
                 token=token,
                 torch_dtype=parse_dtype(args.torch_dtype),
                 model_kwargs=args.model_kwargs,
-                tokenizer=args.tokenizer_dir,
                 trust_remote_code=True,
                 device_map=args.device_map,
-                framework=args.framework ** (args.kwargs or {}),
+                framework=args.framework,
+                **(args.kwargs or {}),
             )
             pipeline = transformers_pipeline(
                 **common_args,
@@ -137,7 +138,7 @@ def create_template_class_from_args(parser: ArgumentParser):
         init_f = init_funct
 
     if args.task_type not in task_type_handlers:
-        raise OutpostError("Task Type not supported")
+        raise OutpostError("Task type not supported")
 
     req_parser = task_type_handlers[args.task_type]
 
