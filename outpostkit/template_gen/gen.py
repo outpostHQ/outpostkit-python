@@ -1,6 +1,6 @@
 import json
 import os
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
 from asyncio import Semaphore
 from tempfile import TemporaryDirectory
 
@@ -65,10 +65,7 @@ def add_generic_template_args(parser: ArgumentParser) -> ArgumentParser:
     return parser
 
 
-def create_template_class_from_args(parser: ArgumentParser):
-    args, unknown = parser.parse_known_args()
-    if unknown:
-        print("ignoring unknown arguements: ", unknown)
+def create_template_class_from_args(args:Namespace):
     model_dir: str
     init_f = None
     if args.load_source == "huggingface":
@@ -158,4 +155,7 @@ def create_template_class_from_args(parser: ArgumentParser):
 def gen_inference_template():
     parser = ArgumentParser("Templated Task Type class generator")
     parser = add_generic_template_args(parser)
-    return create_template_class_from_args(parser=parser)
+    args, unknown = parser.parse_known_args()
+    if unknown:
+        print("ignoring unknown arguements: ", unknown)
+    return create_template_class_from_args(args=args)
