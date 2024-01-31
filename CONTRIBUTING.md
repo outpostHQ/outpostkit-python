@@ -7,7 +7,7 @@ This project has a [GitHub Actions workflow](/.github/workflows/release.yaml) th
 First, set the version number in [pyproject.toml](pyproject.toml) and commit it to the `main` branch:
 
 ```
-version = "0.0.1"
+version = "0.0.6"
 ```
 
 Then run the following in your local checkout:
@@ -15,7 +15,7 @@ Then run the following in your local checkout:
 ```sh
 git checkout main
 git fetch --all --tags
-git tag 0.0.1
+git tag 0.0.6
 git push --tags
 ```
 
