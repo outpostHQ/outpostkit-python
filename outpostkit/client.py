@@ -2,6 +2,7 @@ import os
 import random
 import time
 from datetime import datetime
+from json import JSONDecodeError
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -19,12 +20,12 @@ import httpx
 from typing_extensions import Unpack
 
 from outpostkit.__about__ import __version__
-from outpostkit.collection import Collections
 from outpostkit.constants import V1_API_URL
 from outpostkit.deployment import Deployments
-from outpostkit.exceptions import OutpostError
+from outpostkit.exceptions import OutpostError, OutpostHTTPException
 from outpostkit.hardware import HardwareNamespace as Hardware
 from outpostkit.inference import Inferences
+from outpostkit.logger import outpost_logger
 from outpostkit.model import Models
 from outpostkit.prediction import Predictions
 from outpostkit.run import async_run, run
@@ -102,13 +103,6 @@ class Client:
         """
         resp = self._client.request("GET", "/user")
         return resp.json()
-
-    @property
-    def collections(self) -> Collections:
-        """
-        Namespace for operations related to collections of models.
-        """
-        return Collections(client=self)
 
     @property
     def inferences(self) -> Inferences:
@@ -373,4 +367,33 @@ def _build_httpx_client(
 
 def _raise_for_status(resp: httpx.Response) -> None:
     if 400 <= resp.status_code < 600:
-        raise OutpostError(resp.json()["message"])
+        content_type, _, _ = resp.headers["content-type"].partition(";")
+        # if content_type != "text/event-stream":
+        #     raise ValueError(
+        #         "Expected response Content-Type to be 'text/event-stream', "
+        #         f"got {content_type!r}"
+        #     )
+        try:
+            if content_type == "application/json":
+                try:
+                    data = resp.json()
+                    raise OutpostHTTPException(
+                        status_code=resp.status_code,
+                        message=getattr(
+                            data, "message", "Request failed without message."
+                        ),
+                    ) from None
+                except JSONDecodeError as e:
+                    outpost_logger.error(e)
+                    raise OutpostError("Failed to decode json body.") from e
+            elif content_type == "text/plain":
+                raise OutpostHTTPException(
+                    status_code=resp.status_code, message=resp.text
+                )
+            else:
+                raise OutpostHTTPException(
+                    status_code=resp.status_code,
+                    message=f"Request failed. Unhandled Content Type: {content_type}",
+                )
+        except Exception:
+            raise
