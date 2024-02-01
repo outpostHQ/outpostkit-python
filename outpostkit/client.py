@@ -90,12 +90,12 @@ class Client:
         resp = self._client.request("GET", "/user")
         return resp.json()
 
-    @property
-    def inferences(self) -> Inferences:
+
+    def inferences(self,entity:str) -> Inferences:
         """
         Namespace for operations related to collections of models.
         """
-        return Inferences(client=self)
+        return Inferences(client=self,entity=entity)
 
 
 # Adapted from https://github.com/encode/httpx/issues/108#issuecomment-1132753155
