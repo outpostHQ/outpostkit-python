@@ -211,6 +211,12 @@ class InferenceResource(Resource):
 
     outpostModel: Optional[InferenceOutpostModel]
 
+    createdAt: str
+
+    updatedAt: str
+
+    status: str
+
     def to_inference(self, client: Client, domain_index: int = 0) -> Inference:
         if domain_index < len(self.domains):
             domain = self.domains[0]
