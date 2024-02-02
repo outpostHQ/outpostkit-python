@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outpostkit"
-version = "0.0.21"
+version = "0.0.22"
 description = "Python client for Outpost"
 readme = "README.md"
 license = { file = "LICENSE" }

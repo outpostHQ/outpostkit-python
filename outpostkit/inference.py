@@ -170,6 +170,12 @@ class InferencePredictor(Namespace):
 class ListInferenceDeploymentsResponse:
     total: int
     deployments: List[InferenceDeployment]
+
+@dataclass
+class InferenceDeployResponse:
+    id: int
+
+
 class Inference(Namespace):
     def __init__(self, client: Client, entity:str, name: str) -> None:
         self.entity = entity
@@ -197,7 +203,7 @@ class Inference(Namespace):
 
         return InferenceResource(**resp.json())
 
-    def deploy(self,data:Optional[Dict[str,Any]]=None)->None:
+    def deploy(self,data:Optional[Dict[str,Any]]=None)->InferenceDeployResponse:
         """
         Get details about the inference endpoint
         """
@@ -205,12 +211,35 @@ class Inference(Namespace):
         resp = self._client._request(path=f"/inferences/{self.fullName}/deployments", method="POST",json=data)
         resp.raise_for_status()
 
+        return InferenceDeployResponse(**resp.json())
+
+    async def async_deploy(self,data:Optional[Dict[str,Any]]=None)->InferenceDeployResponse:
+        """
+        Get details about the inference endpoint
+        """
+
+        resp = await self._client._async_request(path=f"/inferences/{self.fullName}/deployments", method="POST",json=data)
+        resp.raise_for_status()
+
+        return InferenceDeployResponse(**resp.json())
+
+
     def list_deploymets(self)->ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """
 
         resp = self._client._request(path=f"/inferences/{self.fullName}/deployments", method="GET")
+        resp.raise_for_status()
+
+        return ListInferenceDeploymentsResponse(**resp.json())
+
+    async def async_list_deploymets(self)->ListInferenceDeploymentsResponse:
+        """
+        Get details about the inference endpoint
+        """
+
+        resp = await self._client._async_request(path=f"/inferences/{self.fullName}/deployments", method="GET")
         resp.raise_for_status()
 
         return ListInferenceDeploymentsResponse(**resp.json())
@@ -279,12 +308,13 @@ class Inference(Namespace):
 @dataclass
 class InferenceListResponse:
     total: int
-    inferences: List[Inference]
+    inferences: List[InferenceResource]
 
 @dataclass
 class InferenceCreateResponse:
     id: int
     name: str
+
 class Inferences(Namespace):
     """
     A namespace for operations related to inferences of models.
