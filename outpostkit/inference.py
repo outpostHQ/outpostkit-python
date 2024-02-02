@@ -2,6 +2,7 @@ import json
 from typing import Any, Dict, List, Optional, TypedDict
 
 from httpx import Response
+from pydantic import BaseModel
 
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
@@ -57,7 +58,7 @@ class Inference(Namespace):
         self.id = id
         super().__init__(client)
 
-    def get(self):
+    def get(self)->dict[str,Any]:
         """
         Get details about the inference endpoint
         """
@@ -67,7 +68,7 @@ class Inference(Namespace):
 
         return resp.json()
 
-    async def async_get(self):
+    async def async_get(self)->dict[str,Any]:
         """
         Get details about the inference endpoint
         """
@@ -108,7 +109,7 @@ class Inference(Namespace):
 
         return resp
 
-    def update(self, fullName: str, data: Dict[str, Any]):
+    def update(self, fullName: str, data: Dict[str, Any])->None:
         """
         Update Inference
         """
@@ -119,18 +120,15 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-    async def async_update(self, fullName: str, data: Dict[str, Any]):
+    async def async_update(self, fullName: str, data: Dict[str, Any])->None:
         """
         Update Inference Async
         """
-        resp = await self._client._async_request(
+        await self._client._async_request(
             "PUT", f"/inferences/{fullName}", json=json.dumps(data)
         )
 
-        obj = resp.json()
-        return obj
-
-    def update_name(self, fullName: str, name: str):
+    def update_name(self, fullName: str, name: str)->None:
         """
         Update Inference
         """
@@ -141,7 +139,7 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-    async def async_update_name(self, fullName: str, name: str):
+    async def async_update_name(self, fullName: str, name: str)->None:
         """
         Update Inference Async
         """
@@ -152,7 +150,7 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-    def delete(self, fullName: str):
+    def delete(self, fullName: str)->None:
         """
         Update Inference
         """
@@ -161,7 +159,7 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-    async def async_delete(self, fullName: str):
+    async def async_delete(self, fullName: str)->None:
         """
         Update Inference Async
         """
@@ -243,7 +241,13 @@ class InferenceResource(Resource):
                 containerType=self.containerType,
             )
 
+class InferenceListResponse(BaseModel):
+    total: int
+    inferences: List[InferenceResource]
 
+class InferenceCreateResponse(BaseModel):
+    id: int
+    name: str
 class Inferences(Namespace):
     """
     A namespace for operations related to inferences of models.
@@ -256,7 +260,7 @@ class Inferences(Namespace):
     @property
     def list(
         self,
-    ) -> List[InferenceResource]:
+    ) -> InferenceListResponse:
         """
         List inferences of models.
 
@@ -267,16 +271,12 @@ class Inferences(Namespace):
         """
         resp = self._client._request("GET", f"/inferences/{self.entity}")
 
-        obj = resp.json()
-        obj["inferences"] = [
-            _json_to_inference_resource(result) for result in obj["inferences"]
-        ]
-
+        obj = InferenceListResponse(**resp.json())
         return obj
-
+    @property
     async def async_list(
         self,
-    ) -> List[InferenceResource]:
+    ) -> InferenceListResponse:
         """
         List inferences of models.
 
@@ -287,14 +287,10 @@ class Inferences(Namespace):
         """
         resp = await self._client._async_request("GET", f"/inferences/{self.entity}")
 
-        obj = resp.json()
-        obj["inferences"] = [
-            _json_to_inference_resource(result) for result in obj["inferences"]
-        ]
-
+        obj = InferenceListResponse(**resp.json())
         return obj
 
-    def create(self, data: Dict[str, Any]):
+    def create(self, data: Dict[str, Any])->InferenceCreateResponse:
         """
         Create Inference
         """
@@ -305,7 +301,7 @@ class Inferences(Namespace):
         obj = resp.json()
         return obj
 
-    async def async_create(self, data: Dict[str, Any]):
+    async def async_create(self, data: Dict[str, Any])->InferenceCreateResponse:
         """
         Create Inference Async
         """
@@ -315,7 +311,3 @@ class Inferences(Namespace):
 
         obj = resp.json()
         return obj
-
-
-def _json_to_inference_resource(json: Dict[str, Any]) -> InferenceResource:
-    return InferenceResource(**json)
