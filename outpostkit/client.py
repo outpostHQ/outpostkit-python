@@ -4,8 +4,6 @@ import time
 from datetime import datetime
 from json import JSONDecodeError
 from typing import (
-    Any,
-    Dict,
     Iterable,
     Mapping,
     Optional,
@@ -19,6 +17,7 @@ from outpostkit.__about__ import __version__
 from outpostkit.constants import V1_API_URL
 from outpostkit.exceptions import OutpostError, OutpostHTTPException
 from outpostkit.logger import outpost_logger
+from outpostkit.user import UserDetails
 
 
 class Client:
@@ -81,13 +80,13 @@ class Client:
         return resp
 
     @property
-    def _user(self) -> Dict[str, Any]:
+    def user(self) -> UserDetails:
         """
         Get Current User
         Returns: the current user details.
         """
         resp = self._client.request("GET", "/user")
-        return resp.json()
+        return UserDetails(**resp.json())
 
 
 # Adapted from https://github.com/encode/httpx/issues/108#issuecomment-1132753155

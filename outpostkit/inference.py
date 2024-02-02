@@ -39,10 +39,19 @@ class Inference(Namespace):
     containerType: str
     endpoint: Optional[str]
 
-    def __init__(self, client: Client,id: str,fullName: str,predictionPath: str,healthcheckPath: str,containerType: str, endpoint: Optional[str]=None) -> None:
+    def __init__(
+        self,
+        client: Client,
+        id: str,
+        fullName: str,
+        predictionPath: str,
+        healthcheckPath: str,
+        containerType: str,
+        endpoint: Optional[str] = None,
+    ) -> None:
         self.fullName = fullName
         self.predictionPath = predictionPath
-        self.healthcheckPath= healthcheckPath
+        self.healthcheckPath = healthcheckPath
         self.containerType = containerType
         self.endpoint = endpoint
         self.id = id
@@ -53,7 +62,7 @@ class Inference(Namespace):
         Get details about the inference endpoint
         """
 
-        resp = self._client._request(path=f"/inferences/{self.fullName}",method="GET")
+        resp = self._client._request(path=f"/inferences/{self.fullName}", method="GET")
         resp.raise_for_status()
 
         return resp.json()
@@ -63,73 +72,87 @@ class Inference(Namespace):
         Get details about the inference endpoint
         """
 
-        resp = await self._client._async_request(path=f"/inferences/{self.fullName}",method="GET")
+        resp = await self._client._async_request(
+            path=f"/inferences/{self.fullName}", method="GET"
+        )
         resp.raise_for_status()
 
         return resp.json()
 
-    def infer(self, **kwargs)->Response:
+    def infer(self, **kwargs) -> Response:
         """Make predictions.
 
         Returns:
             The prediction.
         """
-        if(self.endpoint is None):
+        if self.endpoint is None:
             raise OutpostError("No endpoint configured")
-        resp = self._client._request(path=f"{self.endpoint}{self.predictionPath}",**kwargs)
+        resp = self._client._request(
+            path=f"{self.endpoint}{self.predictionPath}", **kwargs
+        )
         resp.raise_for_status()
 
         return resp
 
-    async def async_infer(self, **kwargs)->Response:
+    async def async_infer(self, **kwargs) -> Response:
         """Make predictions.
 
         Returns:
             The prediction.
         """
-        if(self.endpoint is None):
+        if self.endpoint is None:
             raise OutpostError("No endpoint configured")
-        resp = await self._client._async_request(path=f"{self.endpoint}{self.predictionPath}",**kwargs)
+        resp = await self._client._async_request(
+            path=f"{self.endpoint}{self.predictionPath}", **kwargs
+        )
 
         return resp
 
-    def update(self,fullName:str,data:Dict[str,Any]):
+    def update(self, fullName: str, data: Dict[str, Any]):
         """
         Update Inference
         """
-        resp = self._client._request("PUT", f"/inferences/{fullName}",json=json.dumps(data))
+        resp = self._client._request(
+            "PUT", f"/inferences/{fullName}", json=json.dumps(data)
+        )
 
         obj = resp.json()
         return obj
 
-    async def async_update(self,fullName:str,data:Dict[str,Any]):
+    async def async_update(self, fullName: str, data: Dict[str, Any]):
         """
         Update Inference Async
         """
-        resp = await self._client._async_request("PUT", f"/inferences/{fullName}",json=json.dumps(data))
+        resp = await self._client._async_request(
+            "PUT", f"/inferences/{fullName}", json=json.dumps(data)
+        )
 
         obj = resp.json()
         return obj
 
-    def update_name(self,fullName:str,name:str):
+    def update_name(self, fullName: str, name: str):
         """
         Update Inference
         """
-        resp = self._client._request("PUT", f"/inferences/{fullName}/name",json=json.dumps(dict({"name":name})))
+        resp = self._client._request(
+            "PUT", f"/inferences/{fullName}/name", json=json.dumps(dict({"name": name}))
+        )
 
         obj = resp.json()
         return obj
 
-    async def async_update_name(self,fullName:str,name:str):
+    async def async_update_name(self, fullName: str, name: str):
         """
         Update Inference Async
         """
-        resp = await self._client._async_request("PUT", f"/inferences/{fullName}/name",json=json.dumps(dict({"name":name})))
+        resp = await self._client._async_request(
+            "PUT", f"/inferences/{fullName}/name", json=json.dumps(dict({"name": name}))
+        )
 
         obj = resp.json()
         return obj
 
-    def delete(self,fullName:str):
+    def delete(self, fullName: str):
         """
         Update Inference
         """
@@ -138,7 +161,7 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-    async def async_delete(self,fullName:str):
+    async def async_delete(self, fullName: str):
         """
         Update Inference Async
         """
@@ -147,8 +170,8 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
-class InferenceResource(Resource):
 
+class InferenceResource(Resource):
     """
     A Inference Service on Outpost.
     """
@@ -188,22 +211,39 @@ class InferenceResource(Resource):
 
     outpostModel: Optional[InferenceOutpostModel]
 
-    def to_inference(self,client:Client,domain_index:int=0)->Inference:
-        if(domain_index < len(self.domains)):
+    def to_inference(self, client: Client, domain_index: int = 0) -> Inference:
+        if domain_index < len(self.domains):
             domain = self.domains[0]
             endpoint = f"{domain.get('protocol')}://{domain.get('name')}"
-            return Inference(client=client,id=self.id,fullName=self.fullName,predictionPath=self.predictionPath,healthcheckPath=self.healthcheckPath,endpoint=endpoint,containerType=self.containerType)
+            return Inference(
+                client=client,
+                id=self.id,
+                fullName=self.fullName,
+                predictionPath=self.predictionPath,
+                healthcheckPath=self.healthcheckPath,
+                endpoint=endpoint,
+                containerType=self.containerType,
+            )
         else:
-            outpost_logger.warning("Did not find required domain. Initializing without the endpoint.")
-            return Inference(client=client,id=self.id,fullName=self.fullName,predictionPath=self.predictionPath,healthcheckPath=self.healthcheckPath,containerType=self.containerType)
-
+            outpost_logger.warning(
+                "Did not find required domain. Initializing without the endpoint."
+            )
+            return Inference(
+                client=client,
+                id=self.id,
+                fullName=self.fullName,
+                predictionPath=self.predictionPath,
+                healthcheckPath=self.healthcheckPath,
+                containerType=self.containerType,
+            )
 
 
 class Inferences(Namespace):
     """
     A namespace for operations related to inferences of models.
     """
-    def __init__(self, client: Client,entity:str) -> None:
+
+    def __init__(self, client: Client, entity: str) -> None:
         self.entity = entity
         super().__init__(client)
 
@@ -221,7 +261,9 @@ class Inferences(Namespace):
         resp = self._client._request("GET", f"/inferences/{self.entity}")
 
         obj = resp.json()
-        obj["inferences"] = [_json_to_inference_resource(result) for result in obj["inferences"]]
+        obj["inferences"] = [
+            _json_to_inference_resource(result) for result in obj["inferences"]
+        ]
 
         return obj
 
@@ -239,23 +281,30 @@ class Inferences(Namespace):
         resp = await self._client._async_request("GET", f"/inferences/{self.entity}")
 
         obj = resp.json()
-        obj["inferences"] = [_json_to_inference_resource(result) for result in obj["inferences"]]
+        obj["inferences"] = [
+            _json_to_inference_resource(result) for result in obj["inferences"]
+        ]
 
         return obj
-    def create(self,data:Dict[str,Any]):
+
+    def create(self, data: Dict[str, Any]):
         """
         Create Inference
         """
-        resp = self._client._request("POST", f"/inferences/{self.entity}",json=json.dumps(data))
+        resp = self._client._request(
+            "POST", f"/inferences/{self.entity}", json=json.dumps(data)
+        )
 
         obj = resp.json()
         return obj
 
-    async def async_create(self,data:Dict[str,Any]):
+    async def async_create(self, data: Dict[str, Any]):
         """
         Create Inference Async
         """
-        resp = await self._client._async_request("POST", f"/inferences/{self.entity}",json=json.dumps(data))
+        resp = await self._client._async_request(
+            "POST", f"/inferences/{self.entity}", json=json.dumps(data)
+        )
 
         obj = resp.json()
         return obj

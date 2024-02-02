@@ -1,5 +1,5 @@
 import logging
 
-logging.basicConfig(format="%(asctime)s %(message)s", level=logging.DEBUG)
+logging.basicConfig(format="%(asctime)s %(message)s", level=logging.WARN)
 
 outpost_logger = logging.getLogger("outpost_logger")
