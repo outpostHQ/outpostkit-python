@@ -247,9 +247,10 @@ class Inferences(Namespace):
         self.entity = entity
         super().__init__(client)
 
+    @property
     def list(
         self,
-    ) -> List[Inference]:
+    ) -> List[InferenceResource]:
         """
         List inferences of models.
 
@@ -269,7 +270,7 @@ class Inferences(Namespace):
 
     async def async_list(
         self,
-    ) -> List[Inference]:
+    ) -> List[InferenceResource]:
         """
         List inferences of models.
 
