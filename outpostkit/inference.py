@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from httpx import Response
-from pydantic import BaseModel
 
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
@@ -251,11 +250,13 @@ class InferenceResource:
                 containerType=self.containerType,
             )
 
-class InferenceListResponse(BaseModel):
+@dataclass
+class InferenceListResponse:
     total: int
     inferences: List[InferenceResource]
 
-class InferenceCreateResponse(BaseModel):
+@dataclass
+class InferenceCreateResponse:
     id: int
     name: str
 class Inferences(Namespace):
@@ -305,7 +306,7 @@ class Inferences(Namespace):
         Create Inference
         """
         resp = self._client._request(
-            "POST", f"/inferences/{self.entity}", json=json.dumps(data)
+            "POST", f"/inferences/{self.entity}", json=data
         )
 
         obj = resp.json()
@@ -316,7 +317,7 @@ class Inferences(Namespace):
         Create Inference Async
         """
         resp = await self._client._async_request(
-            "POST", f"/inferences/{self.entity}", json=json.dumps(data)
+            "POST", f"/inferences/{self.entity}", json=data
         )
 
         obj = resp.json()

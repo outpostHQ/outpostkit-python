@@ -271,12 +271,19 @@ def _raise_for_status(resp: httpx.Response) -> None:
             if content_type == "application/json":
                 try:
                     data = resp.json()
-                    raise OutpostHTTPException(
-                        status_code=resp.status_code,
-                        message=getattr(
-                            data, "message", "Request failed without message."
-                        ),
-                    ) from None
+                    if(isinstance(data,dict)):
+                        raise OutpostHTTPException(
+                            status_code=resp.status_code,
+                            message=data.get("message") or "Request failed without message.",
+                            code=data.get('code')
+                        ) from None
+                    else:
+                        raise OutpostHTTPException(
+                            status_code=resp.status_code,
+                            message=data if isinstance(data,str) else getattr(
+                                data, "message", "Request failed without message."
+                            ),
+                        ) from None
                 except JSONDecodeError as e:
                     outpost_logger.error(e)
                     raise OutpostError("Failed to decode json body.") from e
