@@ -11,11 +11,7 @@ if TYPE_CHECKING:
 
 
 
-class BaseModel(pydantic.BaseModel): # type: ignore
-    class Config:
-        arbitrary_types_allowed = True
-
-class Resource(BaseModel):
+class Resource(pydantic.BaseModel): # type: ignore
     """
     A base class for representing a single object on the server.
     """

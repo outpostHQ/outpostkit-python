@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from httpx import Response
@@ -7,30 +8,33 @@ from pydantic import BaseModel
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
 from outpostkit.logger import outpost_logger
-from outpostkit.resource import Namespace, Resource
+from outpostkit.resource import Namespace
 
 
-class DomainInInference(BaseModel):
+@dataclass
+class DomainInInference:
     protocol: str
     name: str
     apexDomain: str
     id: str
 
 
-class InferenceHuggingfaceModel(BaseModel):
+@dataclass
+class InferenceHuggingfaceModel:
     id: str
     keyId: Optional[str]
     revision: Optional[str]
 
 
-class InferenceToOutpostModel(BaseModel):
+@dataclass
+class InferenceToOutpostModel:
     fullName: str
 
 
-class InferenceOutpostModel(BaseModel):
+@dataclass
+class InferenceOutpostModel:
     model: InferenceToOutpostModel
     revision: Optional[str]
-
 
 class Inference(Namespace):
     id: str
@@ -169,7 +173,8 @@ class Inference(Namespace):
         return obj
 
 
-class InferenceResource(Resource):
+@dataclass
+class InferenceResource:
     """
     A Inference Service on Outpost.
     """
@@ -205,10 +210,6 @@ class InferenceResource(Resource):
 
     loadModelWeightsFrom: str
 
-    huggingfaceModel: Optional[InferenceHuggingfaceModel]
-
-    outpostModel: Optional[InferenceOutpostModel]
-
     createdAt: str
 
     updatedAt: str
@@ -216,6 +217,13 @@ class InferenceResource(Resource):
     status: str
 
     instanceType: str
+
+    huggingfaceModel: Optional[InferenceHuggingfaceModel] = None
+
+    outpostModel: Optional[InferenceOutpostModel] = None
+
+    class Config:
+        arbitrary_types_allowed=True
 
     def to_inference(self, client: Client, domain_index: int = 0) -> Inference:
         if domain_index < len(self.domains):
