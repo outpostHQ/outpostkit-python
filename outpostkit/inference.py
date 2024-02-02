@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional
 
 from httpx import Response
 from pydantic import BaseModel
@@ -10,24 +10,24 @@ from outpostkit.logger import outpost_logger
 from outpostkit.resource import Namespace, Resource
 
 
-class DomainInInference(TypedDict):
+class DomainInInference(BaseModel):
     protocol: str
     name: str
     apexDomain: str
     id: str
 
 
-class InferenceHuggingfaceModel(TypedDict):
+class InferenceHuggingfaceModel(BaseModel):
     id: str
     keyId: Optional[str]
     revision: Optional[str]
 
 
-class InferenceToOutpostModel(TypedDict):
+class InferenceToOutpostModel(BaseModel):
     fullName: str
 
 
-class InferenceOutpostModel(TypedDict):
+class InferenceOutpostModel(BaseModel):
     model: InferenceToOutpostModel
     revision: Optional[str]
 
@@ -220,7 +220,7 @@ class InferenceResource(Resource):
     def to_inference(self, client: Client, domain_index: int = 0) -> Inference:
         if domain_index < len(self.domains):
             domain = self.domains[0]
-            endpoint = f"{domain.get('protocol')}://{domain.get('name')}"
+            endpoint = f"{domain.protocol}://{domain.name}"
             return Inference(
                 client=client,
                 id=self.id,
