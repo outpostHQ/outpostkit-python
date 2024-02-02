@@ -2,13 +2,17 @@ import json
 from typing import Any, Dict, List, Optional
 
 from httpx import Response
-from pydantic import BaseModel
+from pydantic import BaseModel as PydanticBaseModel
 
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
 from outpostkit.logger import outpost_logger
 from outpostkit.resource import Namespace, Resource
 
+
+class BaseModel(PydanticBaseModel):
+    class Config:
+        arbitrary_types_allowed = True
 
 class DomainInInference(BaseModel):
     protocol: str
