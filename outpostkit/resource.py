@@ -10,7 +10,12 @@ if TYPE_CHECKING:
     from outpostkit.client import Client
 
 
-class Resource(pydantic.BaseModel):  # type: ignore
+
+class BaseModel(pydantic.BaseModel): # type: ignore
+    class Config:
+        arbitrary_types_allowed = True
+
+class Resource(BaseModel):
     """
     A base class for representing a single object on the server.
     """
