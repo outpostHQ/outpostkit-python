@@ -1,14 +1,15 @@
+from dataclasses import dataclass
 from typing import Dict, Optional
 
-from pydantic import BaseModel
 
-
-class EntityStats(BaseModel):
+@dataclass
+class EntityStats:
     followers_count: int
     following_count: int
 
 
-class UserDetails(BaseModel):
+@dataclass
+class UserDetails:
     id: str
     createdAt: str
     updatedAt:str
@@ -18,3 +19,9 @@ class UserDetails(BaseModel):
     bio: Optional[str]
     socials: Optional[Dict[str,str]]
     displayName:str
+
+@dataclass
+class UserShortDetails:
+    id:str
+    name: str
+    avatarUrl: str
