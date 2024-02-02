@@ -378,7 +378,7 @@ class Inferences(Namespace):
             "POST", f"/inferences/{self.entity}", json=data
         )
 
-        obj = resp.json()
+        obj = InferenceCreateResponse(**resp.json())
         return obj
 
     async def async_create(self, data: Dict[str, Any])->InferenceCreateResponse:
@@ -389,5 +389,5 @@ class Inferences(Namespace):
             "POST", f"/inferences/{self.entity}", json=data
         )
 
-        obj = resp.json()
+        obj = InferenceCreateResponse(**resp.json())
         return obj
