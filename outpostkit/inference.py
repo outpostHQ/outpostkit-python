@@ -171,6 +171,13 @@ class ListInferenceDeploymentsResponse:
     total: int
     deployments: List[InferenceDeployment]
 
+    def __init__(self, total:int, deployments:List[Dict])->None:
+        deps:List[InferenceDeployment]=[]
+        self.total= total
+        for dep in deployments:
+            deps.append(InferenceDeployment(**dep))
+        self.deployments = deps
+
 @dataclass
 class InferenceDeployResponse:
     id: int
@@ -310,6 +317,13 @@ class InferenceListResponse:
     total: int
     inferences: List[InferenceResource]
 
+    def __init__(self, total:int, inferences:List[Dict])->None:
+        infs:List[InferenceResource]=[]
+        self.total= total
+        for inf in inferences:
+            infs.append(InferenceResource(**inf))
+        self.inferences = infs
+
 @dataclass
 class InferenceCreateResponse:
     id: int
@@ -324,7 +338,6 @@ class Inferences(Namespace):
         self.entity = entity
         super().__init__(client)
 
-    @property
     def list(
         self,
     ) -> InferenceListResponse:
@@ -340,7 +353,7 @@ class Inferences(Namespace):
 
         obj = InferenceListResponse(**resp.json())
         return obj
-    @property
+
     async def async_list(
         self,
     ) -> InferenceListResponse:
