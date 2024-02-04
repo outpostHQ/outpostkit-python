@@ -259,61 +259,61 @@ class Inference(Namespace):
 
 
 
-    def update(self, fullName: str, data: Dict[str, Any])->None:
+    def update(self, data: Dict[str, Any]= {})->None:
         """
         Update Inference
         """
         resp = self._client._request(
-            "PUT", f"/inferences/{fullName}", json=data
+            "PUT", f"/inferences/{self.fullName}", json=data
         )
 
         obj = resp.json()
         return obj
 
-    async def async_update(self, fullName: str, data: Dict[str, Any])->None:
+    async def async_update(self,data: Dict[str, Any]= {})->None:
         """
         Update Inference Async
         """
         await self._client._async_request(
-            "PUT", f"/inferences/{fullName}", json=data
+            "PUT", f"/inferences/{self.fullName}", json=data
         )
 
-    def update_name(self, fullName: str, name: str)->None:
+    def update_name(self, name: str)->None:
         """
         Update Inference
         """
         resp = self._client._request(
-            "PUT", f"/inferences/{fullName}/name", json=dict({"name": name})
+            "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
         )
 
         obj = resp.json()
         return obj
 
-    async def async_update_name(self, fullName: str, name: str)->None:
+    async def async_update_name(self, name: str)->None:
         """
         Update Inference Async
         """
         resp = await self._client._async_request(
-            "PUT", f"/inferences/{fullName}/name", json=dict({"name": name})
+            "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
         )
 
         obj = resp.json()
         return obj
 
-    def delete(self, fullName: str)->None:
+    def delete(self)->None:
         """
         Update Inference
         """
-        resp = self._client._request("DELETE", f"/inferences/{fullName}")
+        resp = self._client._request("DELETE", f"/inferences/{self.fullName}")
 
         obj = resp.json()
         return obj
 
-    async def async_delete(self, fullName: str)->None:
+    async def async_delete(self)->None:
         """
         Update Inference Async
         """
-        resp = await self._client._async_request("DELETE", f"/inferences/{fullName}")
+        resp = await self._client._async_request("DELETE", f"/inferences/{self.fullName}")
 
         obj = resp.json()
         return obj
