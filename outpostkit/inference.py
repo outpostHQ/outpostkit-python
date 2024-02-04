@@ -309,6 +309,29 @@ class Inference(Namespace):
         obj = resp.json()
         return obj
 
+    def dep_status(self)-> Dict[str,Any]:
+        """
+        Current deployment status of the inference
+        """
+        resp = self._client._request(
+            "GET", f"/inference/{self.fullName}/status",
+        )
+
+        obj = resp.json()
+        return obj
+
+    def wake(self)-> Dict[str,Any]:
+        """
+        Current deployment status of the inference
+        """
+        resp = self._client._request(
+            "GET", f"/inference/{self.fullName}",
+        )
+
+        obj = resp.json()
+        return obj
+
+
     async def async_delete(self)->None:
         """
         Update Inference Async
@@ -386,6 +409,7 @@ class Inferences(Namespace):
 
         obj = InferenceCreateResponse(**resp.json())
         return obj
+
 
     async def async_create(self, data: Dict[str, Any])->InferenceCreateResponse:
         """
