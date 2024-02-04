@@ -18,6 +18,11 @@ class DomainInInference:
 
 
 @dataclass
+class InferenceHardwareInstanceDetails:
+    id: str
+    name: str
+
+@dataclass
 class InferenceHuggingfaceModel:
     id: str
     keyId: Optional[str]
@@ -33,6 +38,7 @@ class InferenceToOutpostModel:
 class InferenceOutpostModel:
     model: InferenceToOutpostModel
     revision: Optional[str]
+
 
 
 @dataclass
@@ -100,7 +106,7 @@ class InferenceResource:
 
     status: str
 
-    instanceType: str
+    hardwareInstance: InferenceHardwareInstanceDetails
 
     port: int
 
@@ -231,7 +237,7 @@ class Inference(Namespace):
         return InferenceDeployResponse(**resp.json())
 
 
-    def list_deploymets(self)->ListInferenceDeploymentsResponse:
+    def list_deploymets(self,params)->ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """

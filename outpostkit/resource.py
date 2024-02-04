@@ -26,3 +26,4 @@ class Namespace(abc.ABC):
 
     def __init__(self, client: "Client") -> None:
         self._client = client
+

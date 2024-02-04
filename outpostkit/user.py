@@ -25,3 +25,6 @@ class UserShortDetails:
     id:str
     name: str
     avatarUrl: str
+
+
+
