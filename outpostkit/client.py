@@ -16,7 +16,6 @@ import httpx
 from outpostkit.__about__ import __version__
 from outpostkit.constants import V1_API_URL
 from outpostkit.exceptions import OutpostError, OutpostHTTPException
-from outpostkit.logger import outpost_logger
 from outpostkit.user import UserDetails
 
 
@@ -285,7 +284,6 @@ def _raise_for_status(resp: httpx.Response) -> None:
                             ),
                         ) from None
                 except JSONDecodeError as e:
-                    outpost_logger.error(e)
                     raise OutpostError("Failed to decode json body.") from e
             elif content_type == "text/plain":
                 raise OutpostHTTPException(

@@ -1,139 +1,15 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, Optional
+from typing import Any, Dict, List, Optional
 
 from httpx import Response
 
+from outpostkit._types.inference import InferenceDeployment, InferenceResource
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
 from outpostkit.resource import Namespace
-from outpostkit.user import UserShortDetails
 
 
-@dataclass
-class DomainInInference:
-    protocol: str
-    name: str
-    apexDomain: str
-    id: str
-
-
-@dataclass
-class InferenceHardwareInstanceDetails:
-    id: str
-    name: str
-
-@dataclass
-class InferenceHuggingfaceModel:
-    id: str
-    keyId: Optional[str]
-    revision: Optional[str]
-
-
-@dataclass
-class InferenceToOutpostModel:
-    fullName: str
-
-
-@dataclass
-class InferenceOutpostModel:
-    model: InferenceToOutpostModel
-    revision: Optional[str]
-
-
-
-@dataclass
-class InferenceDeployment:
-    id: str
-    status: str
-    createdAt: str
-    concludedAt: Optional[str]
-    updatedAt: str
-    timeTakenS: Optional[int]
-    creator: Optional[UserShortDetails]
-
-
-@dataclass
-class ReplicaScalingConfig:
-    id: str
-    min: int
-    max: int
-    scaledownPeriod: int
-    targetPendingRequests: int
-
-@dataclass
-class InferenceResource:
-    """
-    A Inference Service on Outpost.
-    """
-
-    fullName: str
-    """The fullName used to identify the inference service."""
-
-    name: str
-    """Name of the inference service."""
-
-    visibility: Literal['public','private','internal']
-    """Name of the inference service."""
-
-    id: str
-    """ID of the inference service."""
-
-    ownerId: str
-    """Owner of the inference service."""
-
-    containerType: str
-    """Container type of the inference service."""
-
-    taskType: str
-    """Task type of the inference service."""
-
-    config: dict
-    """Config of the inference service."""
-
-    predictionPath: str
-    """Relative path used for prediction and target for scaling."""
-
-    healthcheckPath: str
-    """Relative path used for healthcheck and readiness probes"""
-
-    domains: List[DomainInInference]
-
-    loadModelWeightsFrom: Literal['huggingface','outpost','none']
-
-    createdAt: str
-
-    updatedAt: str
-
-    status: str
-
-    hardwareInstance: InferenceHardwareInstanceDetails
-
-    port: int
-
-    internalDomains: List[Dict[str,Any]]
-
-    huggingfaceModel: Optional[InferenceHuggingfaceModel] = None
-
-    outpostModel: Optional[InferenceOutpostModel] = None
-
-    # creatorId: Optional[str]=None
-
-    # currentDeploymentId: Optional[str]=None
-
-    currentDeployment: Optional[InferenceDeployment]=None
-
-    # thirdPartyKeyId: Optional[str] =None
-
-    # configSchema: Optional[str] =None
-
-    replicaScalingConfig: Optional[ReplicaScalingConfig] =None
-
-    def __init__(self, *args, **kwargs)->None:
-        for field in self.__annotations__:
-            setattr(self, field, kwargs.get(field))
-
-class InferencePredictor(Namespace):
-
+class Predictior(Namespace):
     def __init__(self, client: Client, endpoint: str, predictionPath:str,containerType:str, taskType:str) -> None:
         self.endpoint = endpoint
         self.containerType = containerType
@@ -236,23 +112,26 @@ class Inference(Namespace):
 
         return InferenceDeployResponse(**resp.json())
 
-
-    def list_deploymets(self,params)->ListInferenceDeploymentsResponse:
+    def list_deploymets(self, **kwargs) -> ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """
 
-        resp = self._client._request(path=f"/inferences/{self.fullName}/deployments", method="GET")
+        resp = self._client._request(
+            path=f"/inferences/{self.fullName}/deployments", method="GET", **kwargs
+        )
         resp.raise_for_status()
 
         return ListInferenceDeploymentsResponse(**resp.json())
 
-    async def async_list_deploymets(self)->ListInferenceDeploymentsResponse:
+    async def async_list_deploymets(self, **kwargs) -> ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """
 
-        resp = await self._client._async_request(path=f"/inferences/{self.fullName}/deployments", method="GET")
+        resp = await self._client._async_request(
+            path=f"/inferences/{self.fullName}/deployments", method="GET", **kwargs
+        )
         resp.raise_for_status()
 
         return ListInferenceDeploymentsResponse(**resp.json())
@@ -379,7 +258,7 @@ class Inferences(Namespace):
             List[Inference]: A page of of model inferences.
         """
         resp = self._client._request("GET", f"/inferences/{self.entity}")
-
+        print(resp.json())
         obj = InferenceListResponse(**resp.json())
         return obj
 
@@ -399,24 +278,21 @@ class Inferences(Namespace):
         obj = InferenceListResponse(**resp.json())
         return obj
 
-    def create(self, data: Dict[str, Any])->InferenceCreateResponse:
+    def create(self, **kwargs) -> InferenceCreateResponse:
         """
         Create Inference
         """
-        resp = self._client._request(
-            "POST", f"/inferences/{self.entity}", json=data
-        )
+        resp = self._client._request("POST", f"/inferences/{self.entity}", **kwargs)
 
         obj = InferenceCreateResponse(**resp.json())
         return obj
 
-
-    async def async_create(self, data: Dict[str, Any])->InferenceCreateResponse:
+    async def async_create(self, **kwargs) -> InferenceCreateResponse:
         """
         Create Inference Async
         """
         resp = await self._client._async_request(
-            "POST", f"/inferences/{self.entity}", json=data
+            "POST", f"/inferences/{self.entity}", **kwargs
         )
 
         obj = InferenceCreateResponse(**resp.json())
