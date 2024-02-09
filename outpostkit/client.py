@@ -14,9 +14,9 @@ from typing import (
 import httpx
 
 from outpostkit.__about__ import __version__
+from outpostkit._types.user import UserDetails
 from outpostkit.constants import V1_API_URL
 from outpostkit.exceptions import OutpostError, OutpostHTTPException
-from outpostkit.user import UserDetails
 
 
 class Client:
@@ -286,6 +286,10 @@ def _raise_for_status(resp: httpx.Response) -> None:
                 except JSONDecodeError as e:
                     raise OutpostError("Failed to decode json body.") from e
             elif content_type == "text/plain":
+                raise OutpostHTTPException(
+                    status_code=resp.status_code, message=resp.text
+                )
+            elif content_type == "text/html":
                 raise OutpostHTTPException(
                     status_code=resp.status_code, message=resp.text
                 )

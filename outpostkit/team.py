@@ -2,9 +2,9 @@ from typing import List, Optional
 
 from outpostkit._types.team import TeamDetails
 from outpostkit._types.user import UserDetails
+from outpostkit.client import Client
 
 from ._types.entity import FollowEntity
-from .client import Client
 from .resource import Namespace
 
 

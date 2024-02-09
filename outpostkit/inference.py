@@ -10,11 +10,20 @@ from outpostkit.resource import Namespace
 
 
 class Predictior(Namespace):
-    def __init__(self, client: Client, endpoint: str, predictionPath:str,containerType:str, taskType:str) -> None:
+    def __init__(
+        self,
+        client: Client,
+        endpoint: str,
+        predictionPath: str,
+        containerType: str,
+        taskType: str,
+        healthcheckPath: str,
+    ) -> None:
         self.endpoint = endpoint
         self.containerType = containerType
         self.taskType = taskType
         self.predictionPath = predictionPath
+        self.healthcheckPath = healthcheckPath
 
         super().__init__(client)
 
@@ -31,6 +40,27 @@ class Predictior(Namespace):
             path=f"{self.endpoint}{self.predictionPath}", **kwargs
         )
         resp.raise_for_status()
+
+        return resp
+
+    def wake(self) -> Response:
+        """
+        Current deployment status of the inference
+        """
+        resp = self._client._request(
+            "GET", path=f"{self.endpoint}{self.predictionPath}"
+        )
+
+        return resp
+
+    def healthcheck(self) -> Response:
+        """
+        Current deployment status of the inference
+        """
+        resp = self._client._request(
+            "GET",
+            path=f"{self.endpoint}{self.healthcheckPath}",
+        )
 
         return resp
 
@@ -194,17 +224,6 @@ class Inference(Namespace):
         """
         resp = self._client._request(
             "GET", f"/inference/{self.fullName}/status",
-        )
-
-        obj = resp.json()
-        return obj
-
-    def wake(self)-> Dict[str,Any]:
-        """
-        Current deployment status of the inference
-        """
-        resp = self._client._request(
-            "GET", f"/inference/{self.fullName}",
         )
 
         obj = resp.json()
