@@ -1,4 +1,4 @@
-__version__ = "0.0.27"
+__version__ = "0.0.28"
 from outpostkit.client import Client as Client
 from outpostkit.inference import Inference as Inference
 from outpostkit.inference import Inferences as Inferences
