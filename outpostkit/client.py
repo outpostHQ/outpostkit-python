@@ -85,6 +85,7 @@ class Client:
         Returns: the current user details.
         """
         resp = self._client.request("GET", "/user")
+        _raise_for_status(resp)
         return UserDetails(**resp.json())
 
 
