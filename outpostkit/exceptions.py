@@ -13,7 +13,7 @@ class OutpostHTTPException(Exception):
         self.code = code
 
     def __str__(self) -> str:
-        return f"{self.status_code}: {self.code + ' - '+ self.message if self.code else self.message}"
+        return f"status: {self.status_code}, message: {self.code + ' - '+ self.message if self.code else self.message}"
 
 
 class ModelError(Exception):
