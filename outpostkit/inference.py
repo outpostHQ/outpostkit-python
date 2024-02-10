@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union, overload
 
 from httpx import Response
 
@@ -142,7 +142,7 @@ class Inference(Namespace):
 
         return InferenceDeployResponse(**resp.json())
 
-    def list_deploymets(self, **kwargs) -> ListInferenceDeploymentsResponse:
+    def list_deployments(self, **kwargs) -> ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """
@@ -154,7 +154,9 @@ class Inference(Namespace):
 
         return ListInferenceDeploymentsResponse(**resp.json())
 
-    async def async_list_deploymets(self, **kwargs) -> ListInferenceDeploymentsResponse:
+    async def async_list_deployments(
+        self, **kwargs
+    ) -> ListInferenceDeploymentsResponse:
         """
         Get details about the inference endpoint
         """
@@ -175,7 +177,7 @@ class Inference(Namespace):
         resp = self._client._request(
             "PUT", f"/inferences/{self.fullName}", json=data
         )
-
+        resp.raise_for_status()
         obj = resp.json()
         return obj
 
@@ -194,6 +196,7 @@ class Inference(Namespace):
         resp = self._client._request(
             "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
         )
+        resp.raise_for_status()
 
         obj = resp.json()
         return obj
@@ -205,6 +208,7 @@ class Inference(Namespace):
         resp = await self._client._async_request(
             "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
         )
+        resp.raise_for_status()
 
         obj = resp.json()
         return obj
@@ -214,30 +218,61 @@ class Inference(Namespace):
         Update Inference
         """
         resp = self._client._request("DELETE", f"/inferences/{self.fullName}")
+        resp.raise_for_status()
 
         obj = resp.json()
         return obj
 
-    def dep_status(self)-> Dict[str,Any]:
+    async def async_delete(self) -> None:
+        """
+        Update Inference Async
+        """
+        resp = await self._client._async_request(
+            "DELETE", f"/inferences/{self.fullName}"
+        )
+        resp.raise_for_status()
+
+        obj = resp.json()
+        return obj
+
+    def dep_status(self) -> Dict[str, Any]:
         """
         Current deployment status of the inference
         """
         resp = self._client._request(
-            "GET", f"/inference/{self.fullName}/status",
+            "GET",
+            f"/inferences/{self.fullName}/status",
         )
+        resp.raise_for_status()
 
         obj = resp.json()
         return obj
 
+    @overload
+    def download_custom_template(self) -> bytes:
+        ...
 
-    async def async_delete(self)->None:
-        """
-        Update Inference Async
-        """
-        resp = await self._client._async_request("DELETE", f"/inferences/{self.fullName}")
+    @overload
+    def download_custom_template(self, destination_path: str) -> None:
+        ...
 
-        obj = resp.json()
-        return obj
+    def download_custom_template(
+        self, destination_path: Optional[str] = None
+    ) -> Union[bytes, None]:
+        """
+        Current deployment status of the inference
+        """
+        resp = self._client._request(
+            "GET",
+            f"/inferences/{self.fullName}/custom-template-file",
+        )
+        resp.raise_for_status()
+        if destination_path:
+            with open(destination_path, "wb") as file:
+                file.write(resp.content)
+        else:
+            return resp.content
+
 
 @dataclass
 class InferenceListResponse:
