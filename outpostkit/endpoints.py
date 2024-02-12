@@ -44,7 +44,7 @@ class Predictior(Namespace):
 
     def wake(self) -> Response:
         """
-        Current deployment status of the inference
+        Current deployment status of the endpoint
         """
         resp = self._client._request(
             "GET", path=f"{self.endpoint}{self.predictionPath}"
@@ -54,7 +54,7 @@ class Predictior(Namespace):
 
     def healthcheck(self) -> Response:
         """
-        Current deployment status of the inference
+        Current deployment status of the endpoint
         """
         resp = self._client._request(
             "GET",
@@ -105,21 +105,21 @@ class Endpoint(Namespace):
 
     def get(self) -> EndpointResource:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
-        resp = self._client._request(path=f"/inferences/{self.fullName}", method="GET")
+        resp = self._client._request(path=f"/endpoints/{self.fullName}", method="GET")
         resp.raise_for_status()
 
         return EndpointResource(**resp.json())
 
     async def async_get(self) -> EndpointResource:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
         resp = await self._client._async_request(
-            path=f"/inferences/{self.fullName}", method="GET"
+            path=f"/endpoints/{self.fullName}", method="GET"
         )
         resp.raise_for_status()
 
@@ -127,11 +127,11 @@ class Endpoint(Namespace):
 
     def deploy(self, data: Optional[Dict[str, Any]] = None) -> EndpointDeployResponse:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
         resp = self._client._request(
-            path=f"/inferences/{self.fullName}/deployments", method="POST", json=data
+            path=f"/endpoints/{self.fullName}/deployments", method="POST", json=data
         )
         resp.raise_for_status()
 
@@ -141,11 +141,11 @@ class Endpoint(Namespace):
         self, data: Optional[Dict[str, Any]] = None
     ) -> EndpointDeployResponse:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
         resp = await self._client._async_request(
-            path=f"/inferences/{self.fullName}/deployments", method="POST", json=data
+            path=f"/endpoints/{self.fullName}/deployments", method="POST", json=data
         )
         resp.raise_for_status()
 
@@ -157,7 +157,7 @@ class Endpoint(Namespace):
         """
 
         resp = self._client._request(
-            path=f"/inferences/{self.fullName}/deployments", method="GET", **kwargs
+            path=f"/endpoints/{self.fullName}/deployments", method="GET", **kwargs
         )
         resp.raise_for_status()
 
@@ -165,11 +165,11 @@ class Endpoint(Namespace):
 
     async def async_list_deployments(self, **kwargs) -> ListEndpointDeploymentsResponse:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
         resp = await self._client._async_request(
-            path=f"/inferences/{self.fullName}/deployments", method="GET", **kwargs
+            path=f"/endpoints/{self.fullName}/deployments", method="GET", **kwargs
         )
         resp.raise_for_status()
 
@@ -177,27 +177,27 @@ class Endpoint(Namespace):
 
     def update(self, data: Dict[str, Any] = {}) -> None:
         """
-        Update Inference
+        Update endpoint
         """
-        resp = self._client._request("PUT", f"/inferences/{self.fullName}", json=data)
+        resp = self._client._request("PUT", f"/endpoints/{self.fullName}", json=data)
         resp.raise_for_status()
         obj = resp.json()
         return obj
 
     async def async_update(self, data: Dict[str, Any] = {}) -> None:
         """
-        Update Inference Async
+        Update endpoint
         """
         await self._client._async_request(
-            "PUT", f"/inferences/{self.fullName}", json=data
+            "PUT", f"/endpoints/{self.fullName}", json=data
         )
 
     def update_name(self, name: str) -> None:
         """
-        Update Inference
+        Update endpoint
         """
         resp = self._client._request(
-            "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
+            "PUT", f"/endpoints/{self.fullName}/name", json=dict({"name": name})
         )
         resp.raise_for_status()
 
@@ -206,10 +206,10 @@ class Endpoint(Namespace):
 
     async def async_update_name(self, name: str) -> None:
         """
-        Update Inference Async
+        Update endpoint
         """
         resp = await self._client._async_request(
-            "PUT", f"/inferences/{self.fullName}/name", json=dict({"name": name})
+            "PUT", f"/endpoints/{self.fullName}/name", json=dict({"name": name})
         )
         resp.raise_for_status()
 
@@ -218,9 +218,9 @@ class Endpoint(Namespace):
 
     def delete(self) -> None:
         """
-        Update Inference
+        Update endpoint
         """
-        resp = self._client._request("DELETE", f"/inferences/{self.fullName}")
+        resp = self._client._request("DELETE", f"/endpoints/{self.fullName}")
         resp.raise_for_status()
 
         obj = resp.json()
@@ -228,10 +228,10 @@ class Endpoint(Namespace):
 
     async def async_delete(self) -> None:
         """
-        Update Inference Async
+        Update endpoint
         """
         resp = await self._client._async_request(
-            "DELETE", f"/inferences/{self.fullName}"
+            "DELETE", f"/endpoints/{self.fullName}"
         )
         resp.raise_for_status()
 
@@ -240,11 +240,11 @@ class Endpoint(Namespace):
 
     def dep_status(self) -> Dict[str, Any]:
         """
-        Current deployment status of the inference
+        Current deployment status of the endpoint
         """
         resp = self._client._request(
             "GET",
-            f"/inferences/{self.fullName}/status",
+            f"/endpoints/{self.fullName}/status",
         )
         resp.raise_for_status()
 
@@ -263,11 +263,11 @@ class Endpoint(Namespace):
         self, destination_path: Optional[str] = None
     ) -> Union[bytes, None]:
         """
-        Current deployment status of the inference
+        Current deployment status of the endpoint.
         """
         resp = self._client._request(
             "GET",
-            f"/inferences/{self.fullName}/custom-template-file",
+            f"/endpoints/{self.fullName}/custom-template-file",
         )
         resp.raise_for_status()
         if destination_path:
@@ -298,7 +298,7 @@ class EndpointCreateResponse:
 
 class Endpoints(Namespace):
     """
-    A namespace for operations related to inferences of models.
+    A namespace for operations related to endpoints.
     """
 
     def __init__(self, client: Client, entity: str) -> None:
@@ -309,14 +309,12 @@ class Endpoints(Namespace):
         self,
     ) -> EndpointListResponse:
         """
-        List inferences of models.
+        List endpoints.
 
         Parameters:
-            entity: The entity whos inferences you want to list.
-        Returns:
-            List[Inference]: A page of of model inferences.
+            entity: The entity whos endpoints you want to list.
         """
-        resp = self._client._request("GET", f"/inferences/{self.entity}")
+        resp = self._client._request("GET", f"/endpoints/{self.entity}")
         print(resp.json())
         obj = EndpointListResponse(**resp.json())
         return obj
@@ -325,33 +323,31 @@ class Endpoints(Namespace):
         self,
     ) -> EndpointListResponse:
         """
-        List inferences of models.
+        List endpoints.
 
         Parameters:
-            entity: The entity whos inferences you want to list.
-        Returns:
-            List[Inference]: A page of of model inferences.WW
+            entity: The entity whos endpoints you want to list.
         """
-        resp = await self._client._async_request("GET", f"/inferences/{self.entity}")
+        resp = await self._client._async_request("GET", f"/endpoints/{self.entity}")
 
         obj = EndpointListResponse(**resp.json())
         return obj
 
     def create(self, **kwargs) -> EndpointCreateResponse:
         """
-        Create Inference
+        Create endpoint
         """
-        resp = self._client._request("POST", f"/inferences/{self.entity}", **kwargs)
+        resp = self._client._request("POST", f"/endpoints/{self.entity}", **kwargs)
 
         obj = EndpointCreateResponse(**resp.json())
         return obj
 
     async def async_create(self, **kwargs) -> EndpointCreateResponse:
         """
-        Create Inference Async
+        Create endpoint
         """
         resp = await self._client._async_request(
-            "POST", f"/inferences/{self.entity}", **kwargs
+            "POST", f"/endpoints/{self.entity}", **kwargs
         )
 
         obj = EndpointCreateResponse(**resp.json())
