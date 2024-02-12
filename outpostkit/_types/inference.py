@@ -86,7 +86,7 @@ class ReplicaScalingConfig:
 
 
 @dataclass
-class InferenceResource:
+class EndpointResource:
     """
     A Inference Service on Outpost.
     """
