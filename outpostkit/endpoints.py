@@ -9,7 +9,7 @@ from outpostkit.exceptions import OutpostError
 from outpostkit.resource import Namespace
 
 
-class Predictior(Namespace):
+class Predictor(Namespace):
     def __init__(
         self,
         client: Client,
