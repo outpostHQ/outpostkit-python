@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Union, overload
 
 from httpx import Response
 
-from outpostkit._types.inference import EndpointResource, InferenceDeployment
+from outpostkit._types.endpoint import EndpointDeployment, EndpointResource
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
 from outpostkit.resource import Namespace
@@ -81,13 +81,13 @@ class Predictor(Namespace):
 @dataclass
 class ListEndpointDeploymentsResponse:
     total: int
-    deployments: List[InferenceDeployment]
+    deployments: List[EndpointDeployment]
 
     def __init__(self, total: int, deployments: List[Dict]) -> None:
-        deps: List[InferenceDeployment] = []
+        deps: List[EndpointDeployment] = []
         self.total = total
         for dep in deployments:
-            deps.append(InferenceDeployment(**dep))
+            deps.append(EndpointDeployment(**dep))
         self.deployments = deps
 
 
@@ -153,7 +153,7 @@ class Endpoint(Namespace):
 
     def list_deployments(self, **kwargs) -> ListEndpointDeploymentsResponse:
         """
-        Get details about the inference endpoint
+        Get details about the endpoint
         """
 
         resp = self._client._request(
@@ -280,14 +280,14 @@ class Endpoint(Namespace):
 @dataclass
 class EndpointListResponse:
     total: int
-    inferences: List[EndpointResource]
+    endpoints: List[EndpointResource]
 
-    def __init__(self, total: int, inferences: List[Dict]) -> None:
+    def __init__(self, total: int, endpoints: List[Dict]) -> None:
         infs: List[EndpointResource] = []
         self.total = total
-        for inf in inferences:
+        for inf in endpoints:
             infs.append(EndpointResource(**inf))
-        self.inferences = infs
+        self.endpoints = infs
 
 
 @dataclass
