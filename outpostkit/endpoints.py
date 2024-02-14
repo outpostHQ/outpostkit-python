@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union, overload
+from typing import Any, Dict, List, Literal, Optional, Union, overload
 
 from httpx import Response
 
@@ -15,13 +15,11 @@ class Predictor(Namespace):
         client: Client,
         endpoint: str,
         predictionPath: str,
-        containerType: str,
-        taskType: str,
+        # containerType: str,
+        # taskType: str,
         healthcheckPath: str,
     ) -> None:
         self.endpoint = endpoint
-        self.containerType = containerType
-        self.taskType = taskType
         self.predictionPath = predictionPath
         self.healthcheckPath = healthcheckPath
 
@@ -52,7 +50,7 @@ class Predictor(Namespace):
 
         return resp
 
-    def healthcheck(self) -> Response:
+    def healthcheck(self) -> Literal["healthy", "unhealthy"]:
         """
         Current deployment status of the endpoint
         """
@@ -61,7 +59,7 @@ class Predictor(Namespace):
             path=f"{self.endpoint}{self.healthcheckPath}",
         )
 
-        return resp
+        return "healthy" if resp.status_code == 200 else "unhealthy"
 
     async def async_infer(self, **kwargs) -> Response:
         """Make predictions.
@@ -112,6 +110,26 @@ class Endpoint(Namespace):
         resp.raise_for_status()
 
         return EndpointResource(**resp.json())
+
+    def get_predictor(self) -> Predictor:
+        """
+        Get prediction client for the endpoint
+        """
+
+        resp = self._client._request(path=f"/endpoints/{self.fullName}", method="GET")
+        resp.raise_for_status()
+
+        endpt = EndpointResource(**resp.json())
+        if endpt.primaryDomain is None:
+            raise OutpostError("No primary domain set.")
+        return Predictor(
+            client=self._client,
+            endpoint=f"{endpt.primaryDomain.protocol}://{endpt.primaryDomain.name}",
+            predictionPath=endpt.predictionPath,
+            # containerType=endpt.containerType,
+            # taskType=endpt.taskType,
+            healthcheckPath=endpt.healthcheckPath,
+        )
 
     async def async_get(self) -> EndpointResource:
         """
