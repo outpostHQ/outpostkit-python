@@ -31,10 +31,10 @@ jobs:
 
       - name: Setup
         run: ./script/setup
-      
-      - name: Setup
-        run: ./script/format
 
       - name: Lint
         run: ./script/lint
+
+      - name: Format
+        run: ./script/format
         
