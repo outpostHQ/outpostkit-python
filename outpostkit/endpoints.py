@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Literal, Optional, Union, overload
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union, overload
 
 from httpx import Response
 
@@ -267,6 +267,22 @@ class Endpoint(Namespace):
         resp.raise_for_status()
 
         obj = resp.json()
+        return obj
+
+    def get_logs(
+        self,
+        deploymentId: str,
+        type: Literal["dep", "runtime", "events"] = "runtime",
+        sequence: Optional[int] = None,
+    ) -> List[Tuple[str, str]]:
+        resp = self._client._request(
+            "GET",
+            f"/endpoints/{self.fullName}/deployments/{deploymentId}/logs/{type}",
+            params={sequence},
+        )
+        resp.raise_for_status()
+
+        obj = [(str(log.time), str(log.message)) for log in resp.json()]
         return obj
 
     @overload
