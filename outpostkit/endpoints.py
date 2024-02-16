@@ -367,16 +367,16 @@ class Endpoints(Namespace):
         obj = EndpointListResponse(**resp.json())
         return obj
 
-    def create(self, **kwargs) -> EndpointCreateResponse:
+    def create(self, **kwargs) -> Endpoint:
         """
         Create endpoint
         """
         resp = self._client._request("POST", f"/endpoints/{self.entity}", **kwargs)
 
         obj = EndpointCreateResponse(**resp.json())
-        return obj
+        return Endpoint(client=self._client, entity=self.entity, name=obj.name)
 
-    async def async_create(self, **kwargs) -> EndpointCreateResponse:
+    async def async_create(self, **kwargs) -> Endpoint:
         """
         Create endpoint
         """
@@ -385,4 +385,4 @@ class Endpoints(Namespace):
         )
 
         obj = EndpointCreateResponse(**resp.json())
-        return obj
+        return Endpoint(client=self._client, entity=self.entity, name=obj.name)
