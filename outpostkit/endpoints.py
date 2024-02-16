@@ -34,7 +34,7 @@ class Predictor(Namespace):
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
         resp = self._client._request(
-            path=f"{self.endpoint}{self.predictionPath}", **kwargs
+            "POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
         )
         resp.raise_for_status()
 
@@ -58,7 +58,6 @@ class Predictor(Namespace):
             "GET",
             path=f"{self.endpoint}{self.healthcheckPath}",
         )
-
         return "healthy" if resp.status_code == 200 else "unhealthy"
 
     async def async_infer(self, **kwargs) -> Response:
@@ -70,7 +69,7 @@ class Predictor(Namespace):
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
         resp = await self._client._async_request(
-            path=f"{self.endpoint}{self.predictionPath}", **kwargs
+            "POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
         )
 
         return resp
