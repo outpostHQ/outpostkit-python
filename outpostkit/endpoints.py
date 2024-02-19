@@ -34,7 +34,7 @@ class Predictor(Namespace):
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
         resp = self._client._request(
-            "POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
+            method="POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
         )
         resp.raise_for_status()
 
@@ -45,20 +45,22 @@ class Predictor(Namespace):
         Current deployment status of the endpoint
         """
         resp = self._client._request(
-            "GET", path=f"{self.endpoint}{self.predictionPath}"
+            method="GET", path=f"{self.endpoint}{self.predictionPath}"
         )
-
         return resp
 
     def healthcheck(self) -> Literal["healthy", "unhealthy"]:
         """
         Current deployment status of the endpoint
         """
-        resp = self._client._request(
-            "GET",
-            path=f"{self.endpoint}{self.healthcheckPath}",
-        )
-        return "healthy" if resp.status_code == 200 else "unhealthy"
+        try:
+            self._client._request(
+                method="GET",
+                path=f"{self.endpoint}{self.healthcheckPath}",
+            )
+            return "healthy"
+        except Exception:
+            return "unhealthy"
 
     async def async_infer(self, **kwargs) -> Response:
         """Make predictions.
@@ -69,7 +71,7 @@ class Predictor(Namespace):
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
         resp = await self._client._async_request(
-            "POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
+            method="POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
         )
 
         return resp
@@ -142,7 +144,7 @@ class Endpoint(Namespace):
 
         return EndpointResource(**resp.json())
 
-    def deploy(self, data: Optional[Dict[str, Any]] = None) -> EndpointDeployResponse:
+    def deploy(self, data: Optional[Dict[str, Any]] = {}) -> EndpointDeployResponse:
         """
         Get details about the endpoint
         """
@@ -150,12 +152,10 @@ class Endpoint(Namespace):
         resp = self._client._request(
             path=f"/endpoints/{self.fullName}/deployments", method="POST", json=data
         )
-        resp.raise_for_status()
-
         return EndpointDeployResponse(**resp.json())
 
     async def async_deploy(
-        self, data: Optional[Dict[str, Any]] = None
+        self, data: Optional[Dict[str, Any]] = {}
     ) -> EndpointDeployResponse:
         """
         Get details about the endpoint
@@ -164,7 +164,7 @@ class Endpoint(Namespace):
         resp = await self._client._async_request(
             path=f"/endpoints/{self.fullName}/deployments", method="POST", json=data
         )
-        resp.raise_for_status()
+
 
         return EndpointDeployResponse(**resp.json())
 
@@ -176,7 +176,7 @@ class Endpoint(Namespace):
         resp = self._client._request(
             path=f"/endpoints/{self.fullName}/deployments", method="GET", **kwargs
         )
-        resp.raise_for_status()
+
 
         return ListEndpointDeploymentsResponse(**resp.json())
 
@@ -188,72 +188,65 @@ class Endpoint(Namespace):
         resp = await self._client._async_request(
             path=f"/endpoints/{self.fullName}/deployments", method="GET", **kwargs
         )
-        resp.raise_for_status()
+
 
         return ListEndpointDeploymentsResponse(**resp.json())
 
-    def update(self, data: Dict[str, Any] = {}) -> None:
+    def update(self, data: Dict[str, Any] = {}) -> Response:
         """
         Update endpoint
         """
         resp = self._client._request("PUT", f"/endpoints/{self.fullName}", json=data)
-        resp.raise_for_status()
-        obj = resp.json()
-        return obj
 
-    async def async_update(self, data: Dict[str, Any] = {}) -> None:
+        return resp
+
+    async def async_update(self, data: Dict[str, Any] = {}) -> Response:
         """
         Update endpoint
         """
-        await self._client._async_request(
+        resp = await self._client._async_request(
             "PUT", f"/endpoints/{self.fullName}", json=data
         )
 
-    def update_name(self, name: str) -> None:
+        return resp
+
+    def update_name(self, name: str) -> Response:
         """
         Update endpoint
         """
         resp = self._client._request(
             "PUT", f"/endpoints/{self.fullName}/name", json=dict({"name": name})
         )
-        resp.raise_for_status()
 
-        obj = resp.json()
-        return obj
+        return resp
 
-    async def async_update_name(self, name: str) -> None:
+    async def async_update_name(self, name: str) -> Response:
         """
         Update endpoint
         """
         resp = await self._client._async_request(
             "PUT", f"/endpoints/{self.fullName}/name", json=dict({"name": name})
         )
-        resp.raise_for_status()
 
-        obj = resp.json()
-        return obj
+        return resp
 
-    def delete(self) -> None:
+    def delete(self) -> Response:
         """
         Update endpoint
         """
         resp = self._client._request("DELETE", f"/endpoints/{self.fullName}")
-        resp.raise_for_status()
 
-        obj = resp.json()
-        return obj
+        return resp
 
-    async def async_delete(self) -> None:
+    async def async_delete(self) -> Response:
         """
         Update endpoint
         """
         resp = await self._client._async_request(
             "DELETE", f"/endpoints/{self.fullName}"
         )
-        resp.raise_for_status()
 
-        obj = resp.json()
-        return obj
+        return resp
 
     def dep_status(self) -> Dict[str, Any]:
         """
@@ -263,7 +256,7 @@ class Endpoint(Namespace):
             "GET",
             f"/endpoints/{self.fullName}/status",
         )
-        resp.raise_for_status()
+
 
         obj = resp.json()
         return obj
@@ -279,7 +272,7 @@ class Endpoint(Namespace):
             f"/endpoints/{self.fullName}/deployments/{deploymentId}/logs/{type}",
             params={sequence},
         )
-        resp.raise_for_status()
+
 
         obj = [(str(log.time), str(log.message)) for log in resp.json()]
         return obj
@@ -302,7 +295,7 @@ class Endpoint(Namespace):
             "GET",
             f"/endpoints/{self.fullName}/custom-template-file",
         )
-        resp.raise_for_status()
+
         if destination_path:
             with open(destination_path, "wb") as file:
                 file.write(resp.content)
@@ -348,7 +341,7 @@ class Endpoints(Namespace):
             entity: The entity whos endpoints you want to list.
         """
         resp = self._client._request("GET", f"/endpoints/{self.entity}")
-        print(resp.json())
+
         obj = EndpointListResponse(**resp.json())
         return obj
 
