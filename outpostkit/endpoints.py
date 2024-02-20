@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from json import JSONDecodeError
 from typing import Any, Dict, List, Literal, Optional, Tuple, Union, overload
 
 import requests
@@ -6,8 +7,51 @@ from httpx import Response
 
 from outpostkit._types.endpoint import EndpointDeployment, EndpointResource
 from outpostkit.client import Client
-from outpostkit.exceptions import OutpostError
+from outpostkit.exceptions import OutpostError, PredictionHTTPException
 from outpostkit.resource import Namespace
+
+
+def _raise_for_status(resp: requests.Response) -> None:
+    if 400 <= resp.status_code < 600:
+        content_type, _, _ = resp.headers["content-type"].partition(";")
+        # if content_type != "text/event-stream":
+        #     raise ValueError(
+        #         "Expected response Content-Type to be 'text/event-stream', "
+        #         f"got {content_type!r}"
+        #     )
+        try:
+            if content_type == "application/json":
+                try:
+                    data = resp.json()
+                    if isinstance(data, dict):
+                        raise PredictionHTTPException(
+                            status_code=resp.status_code,
+                            message="Prediction request failed.",
+                            data=data,
+                        ) from None
+                    else:
+                        raise PredictionHTTPException(
+                            status_code=resp.status_code,
+                            message="Prediction request failed.",
+                            data=data,
+                        ) from None
+                except JSONDecodeError as e:
+                    raise OutpostError("Failed to decode json body.") from e
+            elif content_type == "text/plain":
+                raise PredictionHTTPException(
+                    status_code=resp.status_code, message=resp.text
+                )
+            elif content_type == "text/html":
+                raise PredictionHTTPException(
+                    status_code=resp.status_code, message=resp.text
+                )
+            else:
+                raise PredictionHTTPException(
+                    status_code=resp.status_code,
+                    message=f"Request failed. Unhandled Content Type: {content_type}",
+                )
+        except Exception:
+            raise
 
 
 class Predictor(Namespace):
@@ -43,6 +87,7 @@ class Predictor(Namespace):
             },
             **kwargs,
         )
+        _raise_for_status(resp=resp)
         return resp
 
     def wake(self) -> requests.Response:
