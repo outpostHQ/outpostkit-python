@@ -34,11 +34,11 @@ class Predictor(Namespace):
         """
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
-        added_headers = kwargs.pop("headers")
+        added_headers = kwargs.pop("headers", None)
         resp = requests.post(
             url=f"{self.endpoint}{self.predictionPath}",
             headers={
-                "authorization": str(self._client._api_token),
+                "authorization": f"Bearer {str(self._client._api_token)}",
                 **(added_headers if added_headers else {}),
             },
             **kwargs,
