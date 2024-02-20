@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Literal, Optional, Tuple, Union, overload
 
+import requests
 from httpx import Response
 
 from outpostkit._types.endpoint import EndpointDeployment, EndpointResource
@@ -25,7 +26,7 @@ class Predictor(Namespace):
 
         super().__init__(client)
 
-    def infer(self, **kwargs) -> Response:
+    def infer(self, **kwargs) -> requests.Response:
         """Make predictions.
 
         Returns:
@@ -33,34 +34,40 @@ class Predictor(Namespace):
         """
         if self.endpoint is None:
             raise OutpostError("No endpoint configured")
-        resp = self._client._request(
-            method="POST", path=f"{self.endpoint}{self.predictionPath}", **kwargs
-        )
-        resp.raise_for_status()
-
-        return resp
-
-    def wake(self) -> Response:
-        """
-        Current deployment status of the endpoint
-        """
-        resp = self._client._request(
-            method="GET", path=f"{self.endpoint}{self.predictionPath}"
+        added_headers = kwargs.pop("headers")
+        resp = requests.post(
+            url=f"{self.endpoint}{self.predictionPath}",
+            headers={
+                "authorization": str(self._client._api_token),
+                **(added_headers if added_headers else {}),
+            },
+            **kwargs,
         )
         return resp
 
-    def healthcheck(self) -> Literal["healthy", "unhealthy"]:
+    def wake(self) -> requests.Response:
         """
         Current deployment status of the endpoint
         """
-        try:
-            self._client._request(
-                method="GET",
-                path=f"{self.endpoint}{self.healthcheckPath}",
-            )
-            return "healthy"
-        except Exception:
-            return "unhealthy"
+        resp = requests.get(
+            url=f"{self.endpoint}{self.predictionPath}",
+            headers={"authorization": str(self._client._api_token)},
+        )
+        return resp
+
+    def healthcheck(self) -> requests.Response:
+        """
+        Current deployment status of the endpoint
+        """
+        # try:
+        resp = requests.get(
+            url=f"{self.endpoint}{self.healthcheckPath}",
+        )
+        return resp
+        #     return resp
+        #     return "healthy"
+        # except Exception:
+        #     return "unhealthy"
 
     async def async_infer(self, **kwargs) -> Response:
         """Make predictions.
