@@ -218,6 +218,7 @@ class EndpointResource:
             else:
                 setattr(self, field, kwargs.get(field))
 
+
 @dataclass
 class EndpointReplicaStatusCondition:
     lastTransitionTime: str

@@ -37,7 +37,10 @@ class User(Namespace):
 
         return UserDetails(**resp.json())
 
-    def list_followers(self, include_is_following: bool = False) -> List[FollowEntity]:
+    def list_followers(
+        self,
+        include_is_following: bool = False,  # noqa: FBT001, FBT002
+    ) -> List[FollowEntity]:
         """List followers"""
         resp = self._client._request(
             path="/user/followers",
