@@ -34,7 +34,7 @@ repository = "https://github.com/outposthq/outpostkit-python"
 testpaths = "tests/"
 
 [tool.setuptools]
-packages = ["outpostkit","outpostkit._types"]
+packages = ["outpostkit","outpostkit._types","outpostkit._utils"]
 
 [tool.setuptools.package-data]
 "outpostkit" = ["py.typed"]
