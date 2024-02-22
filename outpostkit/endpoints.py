@@ -88,8 +88,9 @@ class Endpoint(Namespace):
         return ListEndpointDeploymentsResponse(**resp.json())
 
     def deploy(
-        self, wakeup: bool = True
-    ) -> EndpointDeployResponse:  # noqa: FBT001, FBT002
+        self,
+        wakeup: bool = True,  # noqa: FBT001, FBT002
+    ) -> EndpointDeployResponse:
         """
         Deploy the endpoint.
         """
