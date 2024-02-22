@@ -34,7 +34,7 @@ repository = "https://github.com/outposthq/outpostkit-python"
 testpaths = "tests/"
 
 [tool.setuptools]
-packages = ["outpostkit","outpostkit._types"]
+packages = ["outpostkit","outpostkit._types","outpostkit._utils"]
 
 [tool.setuptools.package-data]
 "outpostkit" = ["py.typed"]
@@ -52,7 +52,7 @@ disable = [
 good-names = ["id"]
 
 [tool.ruff]
-select = [
+lint.select = [
     "E",   # pycodestyle error
     "F",   # Pyflakes
     "I",   # isort
@@ -64,7 +64,7 @@ select = [
     "B",   # flake8-bugbear
     "ANN", # flake8-annotations
 ]
-ignore = [
+lint.ignore = [
     "E501",   # Line too long
     "S113",   # Probable use of requests call without timeout
     "ANN001", # Missing type annotation for function argument
@@ -75,7 +75,7 @@ ignore = [
     "W191",   # Indentation contains tabs
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/*" = [
     "S101",   # Use of assert
     "S106",   # Possible use of hard-coded password function arguments

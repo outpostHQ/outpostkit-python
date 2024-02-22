@@ -43,7 +43,7 @@ class Team(Namespace):
 
     def list_followers(
         self,
-        include_is_following: bool = False,
+        include_is_following: bool = False,  # noqa: FBT001, FBT002
     ) -> List[FollowEntity]:
         """List followers"""
         resp = self._client._request(
@@ -57,7 +57,7 @@ class Team(Namespace):
 
     def list_following(
         self,
-        include_is_following: bool = False,
+        include_is_following: bool = False,  # noqa: FBT001, FBT002
     ) -> List[FollowEntity]:
         """List following"""
         resp = self._client._request(

@@ -3,10 +3,14 @@ from typing import Any, Optional
 
 class OutpostHTTPException(Exception):
     """A base class for all Outpost exceptions."""
-    status_code:int
-    message:str
-    code:Optional[str]=None
-    def __init__(self, status_code: int, message: str,code:Optional[str]=None) -> None:
+
+    status_code: int
+    message: str
+    code: Optional[str] = None
+
+    def __init__(
+        self, status_code: int, message: str, code: Optional[str] = None
+    ) -> None:
         super().__init__(message)
         self.status_code = status_code
         self.message = message
