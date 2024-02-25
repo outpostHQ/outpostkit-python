@@ -222,7 +222,7 @@ class EndpointResource:
 
 
 @dataclass
-class ReplicaStatusCondition:
+class EndpointReplicaStatusCondition:
     lastTransitionTime: str
     lastUpdateTime: str
     message: str
@@ -232,18 +232,31 @@ class ReplicaStatusCondition:
 
 
 @dataclass
-class ReplicaStatus:
-    conditions: List[ReplicaStatusCondition] = field(default_factory=lambda: [])
-    observedGeneration: int = 0
-    availableReplicas: int = 0
-    readyReplicas: int = 0
-    replicas: int = 0
-    unavailableReplicas: int = 0
-    updatedReplicas: int = 0
+class EndpointReplicaStatus:
+    conditions: Optional[List[EndpointReplicaStatusCondition]] = field(
+        default_factory=lambda: []
+    )
+    observedGeneration: Optional[int] = None
+    availableReplicas: Optional[int] = None
+    readyReplicas: Optional[int] = None
+    replicas: Optional[int] = None
+    unavailableReplicas: Optional[int] = None
+    updatedReplicas: Optional[int] = None
 
     def __init__(self, *args, **kwargs) -> None:
-        for field in self.__annotations__:
-            if field == "condition" and kwargs.get("conditions") is not None:
-                self.outpostModel = ReplicaStatusCondition(**kwargs.get("condition"))
+        for _field in self.__annotations__:
+            if (
+                _field == "conditions"
+                and kwargs.get("conditions") is not None
+                and isinstance(kwargs.get("conditions"), List)
+            ):
+                self.conditions = (
+                    [
+                        EndpointReplicaStatusCondition(**condition)
+                        for condition in kwargs.get("conditions")
+                    ]
+                    if kwargs.get("conditions") is not None
+                    else []
+                )
             else:
-                setattr(self, field, kwargs.get(field))
+                setattr(self, _field, kwargs.get(_field))
