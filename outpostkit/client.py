@@ -13,7 +13,6 @@ from typing import (
 
 import httpx
 
-from outpostkit.__about__ import __version__
 from outpostkit._types.user import UserDetails
 from outpostkit.constants import V1_API_URL
 from outpostkit.exceptions import OutpostError, OutpostHTTPException
@@ -226,7 +225,7 @@ def _build_httpx_client(
     **kwargs,
 ) -> Union[httpx.Client, httpx.AsyncClient]:
     headers = {
-        "User-Agent": f"outpost-python/{__version__}",
+        "User-Agent": "outpost-python/0.0.38",
     }
 
     if (
