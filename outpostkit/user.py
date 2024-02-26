@@ -26,6 +26,17 @@ class User(Namespace):
 
         return UserDetails(**resp.json())
 
+    def list_third_party_tokens(self) -> UserDetails:
+        """Get User
+
+        Returns:
+            The User details.
+        """
+        resp = self._client._request(path="/user/tokens", method="GET")
+        resp.raise_for_status()
+
+        return resp.json()
+
     async def async_get(self) -> UserDetails:
         """Get User
 

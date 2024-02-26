@@ -1,4 +1,4 @@
-__version__ = "0.0.40"
+__version__ = "0.0.41"
 from outpostkit.client import Client as Client
 from outpostkit.endpoints import Endpoint as Endpoint
 from outpostkit.endpoints import Endpoints as Endpoints
