@@ -312,7 +312,7 @@ class Endpoints(Namespace):
                 resp = self._client._request(
                     "POST",
                     f"/endpoints/{self.entity}",
-                    files={"template": open(template.path)},
+                    files={"template": open(template.path, "b")},
                     data={
                         "metadata": json.dumps(
                             {
