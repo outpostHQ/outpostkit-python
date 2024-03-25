@@ -27,7 +27,7 @@ export OUTPOST_API_TOKEN=<your token>
 import outpostkit
 print(outpostkit.__version__)
 ```
-`0.0.46`
+`0.0.47`
 
 
 ## Create a client
