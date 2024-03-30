@@ -233,6 +233,10 @@ class EndpointListResponse:
             infs.append(EndpointResource(**inf))
         self.endpoints = infs
 
+def scaffold(self, name: str) -> None:
+    with open(name, "x") as f:
+        f.write(scaffolding_file)
+
 
 @dataclass
 class EndpointCreateResponse:
@@ -249,9 +253,6 @@ class Endpoints(Namespace):
         self.entity = entity
         super().__init__(client)
 
-    def scaffold(self, name: str) -> None:
-        with open(name, "x") as f:
-            f.write(scaffolding_file)
 
     def list(
         self,
