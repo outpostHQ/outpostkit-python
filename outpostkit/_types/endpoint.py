@@ -284,3 +284,23 @@ class EndpointReplicaStatus:
                 )
             else:
                 setattr(self, _field, kwargs.get(_field))
+
+
+@dataclass
+class EndpointLogData:
+    level_num: int
+    log_type: Literal["runtime", "dep", "event"]
+    level: str
+    logger_name: str
+    message: str
+    exc_info: Optional[str] = None
+    stack_info: Optional[str] = None
+    replica: Optional[str] = None
+    extra: Dict[str, Any] = field(default_factory=lambda: {})
+    # TODO extend for all the info
+
+
+@dataclass
+class EndpointLog:
+    timestamp: str
+    data: EndpointLogData
