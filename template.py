@@ -1,13 +1,3 @@
-from enum import Enum
-
-
-class ServiceVisibility(Enum):
-    public = "public"
-    internal = "internal"
-    private = "private"
-
-
-scaffolding_file = """
 from typing import Callable, Dict, List, Type, Union
 
 from fastapi import Request
@@ -36,5 +26,4 @@ class PredictionTemplate:
         \"\"\"
         prediction handler that can take paramaters like a FastAPI route handler
         \"\"\"
-        return { "ping":"pong" }
-"""
+        return { "ping":"pong"}

@@ -1,7 +1,6 @@
 import json
 import os
 from dataclasses import asdict, dataclass
-from datetime import datetime
 from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 from urllib.parse import urlparse
 
@@ -182,8 +181,8 @@ class Endpoint(Namespace):
         self,
         log_type: Optional[Literal["dep", "runtime", "event"]] = None,
         deployment_id: Optional[str] = None,
-        start: Optional[Union[int, str, datetime]] = None,
-        end: Optional[Union[int, str, datetime]] = None,
+        start: Optional[Union[int, str]] = None,
+        end: Optional[Union[int, str]] = None,
         limit: Optional[int] = 1000,
     ) -> List[Tuple[str, str]]:
         """
@@ -233,7 +232,7 @@ class EndpointListResponse:
             infs.append(EndpointResource(**inf))
         self.endpoints = infs
 
-def scaffold(self, name: str) -> None:
+def scaffold(name: str) -> None:
     with open(name, "x") as f:
         f.write(scaffolding_file)
 
