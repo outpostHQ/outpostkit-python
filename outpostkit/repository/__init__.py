@@ -29,6 +29,7 @@ class Repository(Namespace):
             path=f"/git/blobs/{self.repo_type}/{self.fullName}/download/{ref}{path}",
             method="GET",
             params={"raw": raw},
+            stream=True,
         )
         resp.raise_for_status()
 
@@ -66,7 +67,6 @@ class Repository(Namespace):
 
 
 class RepositoryAtRef(Namespace):
-
     def __init__(
         self,
         client: Client,
