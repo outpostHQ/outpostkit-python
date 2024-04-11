@@ -1,1 +1,1 @@
-V1_API_URL = "https://api.outpost.run/v1"
+V1_API_URL = "https://api-gateway.outpost.run/v1"
