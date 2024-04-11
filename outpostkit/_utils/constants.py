@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from enum import Enum
 
 
@@ -5,6 +6,12 @@ class ServiceVisibility(Enum):
     public = "public"
     internal = "internal"
     private = "private"
+
+
+@dataclass
+class OutpostSecret:
+    name: str
+    value: str
 
 
 scaffolding_file = """

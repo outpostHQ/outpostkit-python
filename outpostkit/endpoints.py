@@ -14,10 +14,13 @@ from outpostkit._types.endpoint import (
     EndpointPrebuiltContainerDetails,
     EndpointReplicaStatus,
     EndpointResource,
-    EndpointSecret,
     ReplicaScalingConfig,
 )
-from outpostkit._utils.constants import ServiceVisibility, scaffolding_file
+from outpostkit._utils.constants import (
+    OutpostSecret,
+    ServiceVisibility,
+    scaffolding_file,
+)
 from outpostkit.client import Client
 from outpostkit.exceptions import OutpostError
 from outpostkit.predictor import Predictor
@@ -281,7 +284,7 @@ class Endpoints(Namespace):
         hardware_instance: str = "cpu-sm",
         task_type: Optional[str] = None,
         name: Optional[str] = None,
-        secrets: Optional[List[EndpointSecret]] = None,
+        secrets: Optional[List[OutpostSecret]] = None,
         visibility: ServiceVisibility = ServiceVisibility.public,
         replica_scaling_config: Optional[ReplicaScalingConfig] = None,
     ) -> Endpoint:

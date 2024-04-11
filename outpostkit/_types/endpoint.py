@@ -249,10 +249,6 @@ class EndpointReplicaStatusCondition:
     type: str
 
 
-@dataclass
-class EndpointSecret:
-    name: str
-    value: str
 
 
 @dataclass
