@@ -180,10 +180,10 @@ class Finetunings(Namespace):
             self._route_prefix,
             json={
                 "name": name,
-                "task_type": task_type.value,
+                "taskType": task_type.value,
                 "dataset": dataset,
-                "train_path": train_path,
-                "valid_path": validation_path,
+                "trainPath": train_path,
+                "validPath": validation_path,
                 "secrets": [asdict(secret) for secret in secrets] if secrets else None,
             },
         )
