@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Literal, Mapping, Optional
 
+from outpostkit._types.entity import HardwareInstanceDetails
+
 from .user import UserShortDetails
 
 
@@ -9,12 +11,6 @@ class EndpointDomainDetails:
     protocol: str
     name: str
     id: str
-
-
-@dataclass
-class EndpointHardwareInstanceDetails:
-    id: str
-    name: str
 
 
 @dataclass
@@ -168,7 +164,7 @@ class EndpointResource:
 
     status: str
 
-    hardwareInstance: EndpointHardwareInstanceDetails
+    hardwareInstance: HardwareInstanceDetails
 
     port: int
 
@@ -211,7 +207,7 @@ class EndpointResource:
                     **kwargs.get("primaryDomain")
                 )
             elif _field == "hardwareInstance":
-                self.hardwareInstance = EndpointHardwareInstanceDetails(
+                self.hardwareInstance = HardwareInstanceDetails(
                     **kwargs.get("hardwareInstance")
                 )
             elif (

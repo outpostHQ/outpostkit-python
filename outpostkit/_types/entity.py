@@ -11,3 +11,9 @@ class FollowEntity:
     type: ENTITY_TYPES
     avatarUrl: str
     isFollowing: Optional[bool]
+
+
+@dataclass
+class HardwareInstanceDetails:
+    id: str
+    name: str

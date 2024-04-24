@@ -7,7 +7,9 @@ from outpostkit._types.finetuning import (
     FinetuningJobLog,
     FinetuningModelRepo,
     FinetuningOutpostSourceModel,
+    FinetuningResource,
     FinetuningServiceCreateResponse,
+    FinetuningsListResponse,
 )
 from outpostkit._utils.constants import OutpostSecret
 from outpostkit._utils.finetuning import FinetuningTask
@@ -104,6 +106,10 @@ class FinetuningService(Namespace):
         self._route_prefix = f"/finetunings/{self.fullName}"
         super().__init__(client)
 
+    def info(self):
+        resp = self._client._request("GET", f"{self._route_prefix}")
+        return FinetuningResource(**resp.json())
+
     def list_jobs(
         self,
         status_in: Optional[List[str]] = None,
@@ -130,8 +136,9 @@ class FinetuningService(Namespace):
         configs: Dict[str, Any],
         column_configs: Optional[Dict[str, str]] = None,
         model_source: Literal["huggingface", "outpost", "none"] = "none",
-        source_huggingface_model: Optional[FinetuningHFSourceModel] = None,
-        source_outpost_model: Optional[FinetuningOutpostSourceModel] = None,
+        source_model: Optional[
+            Union[FinetuningHFSourceModel, FinetuningOutpostSourceModel]
+        ] = None,
         dataset_revision: Optional[str] = "HEAD",
         enqueue: Optional[bool] = None,
     ) -> FinetuningJob:
@@ -143,8 +150,12 @@ class FinetuningService(Namespace):
                 "configs": configs,
                 "columnConfigs": column_configs,
                 "modelSource": model_source,
-                "sourceHuggingfaceModel": source_huggingface_model,
-                "sourceOutpostModel": source_outpost_model,
+                "sourceHuggingfaceModel": source_model
+                if isinstance(source_model, FinetuningHFSourceModel)
+                else None,
+                "sourceOutpostModel": source_model
+                if isinstance(source_model, FinetuningOutpostSourceModel)
+                else None,
                 "finetunedModel": finetuned_model_repo,
                 "datasetRevision": dataset_revision,
             },
@@ -164,7 +175,7 @@ class Finetunings(Namespace):
 
     def list(self):
         resp = self._client._request("GET", self._route_prefix)
-        return resp.json()
+        return FinetuningsListResponse(**resp.json())
 
     def create(
         self,
