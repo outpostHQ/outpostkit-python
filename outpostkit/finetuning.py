@@ -1,9 +1,99 @@
-from typing import List, Optional
+from typing import Any, Dict, List, Literal, Optional, Union
 
-from outpostkit._types.finetuning import FinetuningServiceCreateResponse
+from outpostkit._types.finetuning import (
+    FinetuningHFSourceModel,
+    FinetuningJobCreationResponse,
+    FinetuningJobLog,
+    FinetuningModelRepo,
+    FinetuningOutpostSourceModel,
+    FinetuningServiceCreateResponse,
+)
 from outpostkit._utils.constants import OutpostSecret
 from outpostkit.client import Client
 from outpostkit.resource import Namespace
+from outpostkit.utils import parse_finetuning_job_log_data
+
+
+class FinetuningJob(Namespace):
+    def __init__(self, client: Client, entity: str, name: str, job_id: str) -> None:
+        self.entity = entity
+        self.name = name
+        self.fullName = f"{entity}/{name}"
+        self.id = job_id
+        super().__init__(client)
+
+    def enqueue(self):
+        resp = self._client._request(
+            "POST", f"/finetunings/{self.entity}/jobs/enqueue", json={"jobs": [self.id]}
+        )
+        return resp
+
+    def info(
+        self,
+        with_config: Optional[bool] = None,
+        with_trainer_log: Optional[bool] = None,
+    ):
+        resp = self._client._request(
+            "GET",
+            f"/finetunings/{self.entity}/jobs/{self.id}",
+            params={
+                "cfg": with_config,
+                "trainer_log": with_trainer_log,
+            },
+        )
+        return resp
+
+    def configs(self):
+        resp = self._client._request(
+            "GET",
+            f"/finetunings/{self.entity}/jobs/{self.id}/configs",
+        )
+        return resp
+
+    def trainer_logs(self):
+        resp = self._client._request(
+            "GET",
+            f"/finetunings/{self.entity}/jobs/{self.id}/logs/trainer",
+        )
+        return resp
+
+    def delete(self):
+        resp = self._client._request(
+            "DELETE",
+            f"/finetunings/{self.entity}/jobs/{self.id}",
+        )
+        return resp
+
+    def get_logs(
+        self,
+        log_type: Optional[Literal["dep", "runtime", "event"]] = None,
+        start: Optional[Union[int, str]] = None,
+        end: Optional[Union[int, str]] = None,
+        limit: Optional[int] = 1000,
+    ) -> List[FinetuningJobLog]:
+        """
+        Retrieve logs related to the endpoint
+        Available log types:runtime, dep (deployment) and event.
+        Note: the start time defaults to 15 mins ago
+        """
+        resp = self._client._request(
+            "GET",
+            f"/finetunings/{self.fullName}/jobs/{self.id}/logs",
+            params={
+                "logType": log_type,
+                "limit": limit,
+                "start": start,
+                "end": end,
+            },
+        )
+
+        return [
+            FinetuningJobLog(
+                timestamp=str(log.get("timestamp")),
+                data=parse_finetuning_job_log_data(log.get("data")),
+            )
+            for log in resp.json()
+        ]
 
 
 class FinetuningService(Namespace):
@@ -12,6 +102,57 @@ class FinetuningService(Namespace):
         self.name = name
         self.fullName = f"{entity}/{name}"
         super().__init__(client)
+
+    def list_jobs(
+        self,
+        status_in: Optional[List[str]] = None,
+        status_not_in: Optional[List[str]] = None,
+        with_config: Optional[bool] = None,
+        with_trainer_log: Optional[bool] = None,
+    ):
+        resp = self._client._request(
+            "GET",
+            f"/finetunings/{self.entity}/jobs",
+            params={
+                "statusIn": ",".join(status_in) if status_in else None,
+                "statusNotIn": ",".join(status_not_in) if status_not_in else None,
+                "cfg": with_config,
+                "trainer_log": with_trainer_log,
+            },
+        )
+        return resp.json()
+
+    def create_job(
+        self,
+        hardware_instance: str,
+        finetuned_model_repo: FinetuningModelRepo,
+        configs: Dict[str, Any],
+        column_configs: Optional[Dict[str, str]] = None,
+        model_source: Literal["huggingface", "outpost", "none"] = "none",
+        source_huggingface_model: Optional[FinetuningHFSourceModel] = None,
+        source_outpost_model: Optional[FinetuningOutpostSourceModel] = None,
+        dataset_revision: Optional[str] = "HEAD",
+        enqueue: Optional[bool] = None,
+    ) -> FinetuningJob:
+        resp = self._client._request(
+            "POST",
+            f"/finetunings/{self.entity}/jobs",
+            json={
+                "hardwareInstanceId": hardware_instance,
+                "configs": configs,
+                "columnConfigs": column_configs,
+                "modelSource": model_source,
+                "sourceHuggingfaceModel": source_huggingface_model,
+                "sourceOutpostModel": source_outpost_model,
+                "finetunedModel": finetuned_model_repo,
+                "datasetRevision": dataset_revision,
+            },
+            params={"enqueue": enqueue},
+        )
+        job_resp = FinetuningJobCreationResponse(**resp.json())
+        return FinetuningJob(
+            client=self._client, entity=self.entity, name=self.name, job_id=job_resp.id
+        )
 
 
 class Finetunings(Namespace):
