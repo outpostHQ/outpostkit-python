@@ -180,7 +180,7 @@ class Finetunings(Namespace):
             self._route_prefix,
             json={
                 "name": name,
-                "task_type": task_type,
+                "task_type": task_type.value,
                 "dataset": dataset,
                 "train_path": train_path,
                 "valid_path": validation_path,
