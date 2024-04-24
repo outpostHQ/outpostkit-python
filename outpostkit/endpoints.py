@@ -304,7 +304,9 @@ class Endpoints(Namespace):
                         else None
                     ),
                     "name": name,
-                    "secrets": secrets,
+                    "secrets": [asdict(secret) for secret in secrets]
+                    if secrets
+                    else None,
                     "prebuiltContainerDetails": (
                         asdict(container) if container else None
                     ),
@@ -334,7 +336,9 @@ class Endpoints(Namespace):
                                     else None
                                 ),
                                 "name": name,
-                                "secrets": secrets,
+                                "secrets": [asdict(secret) for secret in secrets]
+                                if secrets
+                                else None,
                                 "prebuiltContainerDetails": (
                                     asdict(container) if container else None
                                 ),
@@ -364,7 +368,9 @@ class Endpoints(Namespace):
                             else None
                         ),
                         "name": name,
-                        "secrets": secrets,
+                        "secrets": [asdict(secret) for secret in secrets]
+                        if secrets
+                        else None,
                         "prebuiltContainerDetails": (
                             asdict(container) if container else None
                         ),

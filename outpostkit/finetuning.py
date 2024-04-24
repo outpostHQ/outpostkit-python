@@ -1,3 +1,4 @@
+from dataclasses import asdict
 from typing import Any, Dict, List, Literal, Optional, Union
 
 from outpostkit._types.finetuning import (
@@ -174,6 +175,17 @@ class Finetunings(Namespace):
         validation_path: str,
         secrets: Optional[List[OutpostSecret]] = None,
     ) -> FinetuningService:
-        resp = self._client._request("POST", self._route_prefix)
+        resp = self._client._request(
+            "POST",
+            self._route_prefix,
+            json={
+                "name": name,
+                "task_type": task_type,
+                "dataset": dataset,
+                "train_path": train_path,
+                "valid_path": validation_path,
+                "secrets": [asdict(secret) for secret in secrets] if secrets else None,
+            },
+        )
         obj = FinetuningServiceCreateResponse(**resp.json())
         return FinetuningService(client=self._client, entity=self.entity, name=obj.name)
