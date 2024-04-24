@@ -70,8 +70,8 @@ job = fntun.create_job(
     column_configs={"text": "text"},
     configs=CONFIGS,
     model_source="huggingface",
-    source_huggingface_model=FinetuningHFSourceModel(id="openaicommunity/gpt2"),
-    enqueue=True
+    source_model=FinetuningHFSourceModel(id="openaicommunity/gpt2"),
+    enqueue=True,
 )
 
 

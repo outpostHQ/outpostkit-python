@@ -74,7 +74,7 @@ class FinetuningJob(Namespace):
         limit: Optional[int] = 1000,
     ) -> List[FinetuningJobLog]:
         """
-        Retrieve logs related to the endpoint
+        Retrieve logs related to the finetuning job
         Available log types:runtime, dep (deployment) and event.
         Note: the start time defaults to 15 mins ago
         """
@@ -150,14 +150,14 @@ class FinetuningService(Namespace):
                 "configs": configs,
                 "columnConfigs": column_configs,
                 "modelSource": model_source,
-                "sourceHuggingfaceModel": source_model
+                "sourceHuggingfaceModel": asdict(source_model)
                 if isinstance(source_model, FinetuningHFSourceModel)
                 else None,
-                "sourceOutpostModel": source_model
+                "sourceOutpostModel": asdict(source_model)
                 if isinstance(source_model, FinetuningOutpostSourceModel)
                 else None,
-                "finetunedModel": finetuned_model_repo,
-                "datasetRevision": dataset_revision,
+                "finetunedModel": asdict(finetuned_model_repo),
+                "datasetCommitHash": dataset_revision,
             },
             params={"enqueue": enqueue},
         )
