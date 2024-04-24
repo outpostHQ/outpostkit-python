@@ -9,6 +9,7 @@ from outpostkit._types.finetuning import (
     FinetuningServiceCreateResponse,
 )
 from outpostkit._utils.constants import OutpostSecret
+from outpostkit._utils.finetuning import FinetuningTask
 from outpostkit.client import Client
 from outpostkit.resource import Namespace
 from outpostkit.utils import parse_finetuning_job_log_data
@@ -20,6 +21,7 @@ class FinetuningJob(Namespace):
         self.name = name
         self.fullName = f"{entity}/{name}"
         self.id = job_id
+        self._route_prefix = f"/finetunings/{self.fullName}/jobs/{self.id}"
         super().__init__(client)
 
     def enqueue(self):
@@ -35,7 +37,7 @@ class FinetuningJob(Namespace):
     ):
         resp = self._client._request(
             "GET",
-            f"/finetunings/{self.entity}/jobs/{self.id}",
+            self._route_prefix,
             params={
                 "cfg": with_config,
                 "trainer_log": with_trainer_log,
@@ -46,22 +48,19 @@ class FinetuningJob(Namespace):
     def configs(self):
         resp = self._client._request(
             "GET",
-            f"/finetunings/{self.entity}/jobs/{self.id}/configs",
+            f"{self._route_prefix}/configs",
         )
         return resp
 
     def trainer_logs(self):
         resp = self._client._request(
             "GET",
-            f"/finetunings/{self.entity}/jobs/{self.id}/logs/trainer",
+            f"{self._route_prefix}/logs/trainer",
         )
         return resp
 
     def delete(self):
-        resp = self._client._request(
-            "DELETE",
-            f"/finetunings/{self.entity}/jobs/{self.id}",
-        )
+        resp = self._client._request("DELETE", self._route_prefix)
         return resp
 
     def get_logs(
@@ -78,7 +77,7 @@ class FinetuningJob(Namespace):
         """
         resp = self._client._request(
             "GET",
-            f"/finetunings/{self.fullName}/jobs/{self.id}/logs",
+            f"{self._route_prefix}/logs",
             params={
                 "logType": log_type,
                 "limit": limit,
@@ -101,6 +100,7 @@ class FinetuningService(Namespace):
         self.entity = entity
         self.name = name
         self.fullName = f"{entity}/{name}"
+        self._route_prefix = f"/finetunings/{self.fullName}"
         super().__init__(client)
 
     def list_jobs(
@@ -112,7 +112,7 @@ class FinetuningService(Namespace):
     ):
         resp = self._client._request(
             "GET",
-            f"/finetunings/{self.entity}/jobs",
+            f"{self._route_prefix}/jobs",
             params={
                 "statusIn": ",".join(status_in) if status_in else None,
                 "statusNotIn": ",".join(status_not_in) if status_not_in else None,
@@ -136,7 +136,7 @@ class FinetuningService(Namespace):
     ) -> FinetuningJob:
         resp = self._client._request(
             "POST",
-            f"/finetunings/{self.entity}/jobs",
+            f"{self._route_prefix}/jobs",
             json={
                 "hardwareInstanceId": hardware_instance,
                 "configs": configs,
@@ -156,25 +156,24 @@ class FinetuningService(Namespace):
 
 
 class Finetunings(Namespace):
-    def __init__(self, client: Client, entity: str, name: str) -> None:
+    def __init__(self, client: Client, entity: str) -> None:
         self.entity = entity
-        self.name = name
-        self.fullName = f"{entity}/{name}"
+        self._route_prefix = f"/finetunings/{self.entity}"
         super().__init__(client)
 
     def list(self):
-        resp = self._client._request("GET", f"/finetunings/{self.entity}")
+        resp = self._client._request("GET", self._route_prefix)
         return resp.json()
 
     def create(
         self,
         name: str,
-        task_type: str,
+        task_type: FinetuningTask,
         dataset: str,
         train_path: str,
         validation_path: str,
         secrets: Optional[List[OutpostSecret]] = None,
     ) -> FinetuningService:
-        resp = self._client._request("POST", f"/finetunings/{self.entity}")
+        resp = self._client._request("POST", self._route_prefix)
         obj = FinetuningServiceCreateResponse(**resp.json())
         return FinetuningService(client=self._client, entity=self.entity, name=obj.name)

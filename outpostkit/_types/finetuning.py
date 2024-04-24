@@ -7,6 +7,7 @@ class FinetuningServiceCreateResponse:
     id: int
     name: str
 
+
 @dataclass
 class FinetuningHFSourceModel:
     id: str

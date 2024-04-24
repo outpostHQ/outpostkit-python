@@ -249,8 +249,6 @@ class EndpointReplicaStatusCondition:
     type: str
 
 
-
-
 @dataclass
 class EndpointReplicaStatus:
     conditions: Optional[List[EndpointReplicaStatusCondition]] = field(

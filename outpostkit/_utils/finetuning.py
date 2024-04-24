@@ -4,7 +4,7 @@ from enum import Enum
 class FinetuningTask(Enum):
     text_classification = "text_classification"
     clm_sft = "clm_sft"
-    clm_dpo = ("clm_dpo",)
+    clm_dpo = "clm_dpo"
     clm_default = "clm_default"
     clm_reward = "clm_reward"
     seq2seq = "seq2seq"

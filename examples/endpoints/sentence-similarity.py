@@ -35,7 +35,6 @@ print(f"name: {endpt.name}")
 print(f"home: https://outpost.run/{ENTITY}/inference-endpoints/{endpt.name}/overview")
 
 
-
 # wait for endpoint to start.
 
 # if endpt.get().status == "healthy":
