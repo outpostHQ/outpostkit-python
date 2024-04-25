@@ -42,6 +42,7 @@ def setup_model_for_transformers(
     revision = str(kwargs.get("revision"))
     if token is not None:
         hub_kwargs["token"] = token
+
     # if resolved is None:
     #     if not isinstance(config, PretrainedConfig):
     #         # We make a call to the config file first (which may be absent) to get the commit hash as soon as possible
@@ -90,7 +91,6 @@ def setup_model_for_transformers(
             return_unused_kwargs=True,
             trust_remote_code=trust_remote_code,
             code_revision=code_revision,
-            _commit_hash=commit_hash,
             **hub_kwargs,
             **kwargs,
         )
