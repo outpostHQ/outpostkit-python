@@ -15,6 +15,7 @@ dependencies = [
     "packaging",
     "pydantic>1",
     "typing_extensions>=4.5.0",
+    "dataclasses_json",
 ]
 optional-dependencies = { dev = [
     "pylint",
