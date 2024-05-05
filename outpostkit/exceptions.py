@@ -42,7 +42,7 @@ class PredictionHTTPException(Exception):
         self.data = data
 
     def __str__(self) -> str:
-        return f"status: {self.status_code}, message: {self.code + ' - '+ self.message if self.code else self.message}"
+        return f"status: {self.status_code}, data: {self.data}"
 
 
 class ModelError(Exception):
