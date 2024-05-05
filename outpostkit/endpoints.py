@@ -47,10 +47,26 @@ class EndpointDeployResponse:
 
 
 class Endpoint(Namespace):
-    def __init__(self, client: Client, entity: str, name: str) -> None:
-        self.entity = entity
-        self.name = name
-        self.fullName = f"{entity}/{name}"
+    def __init__(
+        self,
+        client: Client,
+        entity: Optional[str],
+        name: Optional[str],
+        full_name: Optional[str] = None,
+    ) -> None:
+        if name and entity:
+            self.entity = entity
+            self.name = name
+            self.fullName = f"{entity}/{name}"
+        if full_name:
+            _split = full_name.split("/", 1)
+            assert len(_split) == 2, "Invalid Full Name"
+            self.entity = _split[0]
+            self.name = _split[1]
+            self.fullName = self.fullName
+        else:
+            raise OutpostError("Please provide identifiable information.")
+
         super().__init__(client)
 
     def get(self) -> EndpointResource:
