@@ -225,7 +225,7 @@ def _build_httpx_client(
     **kwargs,
 ) -> Union[httpx.Client, httpx.AsyncClient]:
     headers = {
-        "User-Agent": "outpost-python/0.0.60",
+        "User-Agent": "outpost-python/0.0.61",
     }
 
     if (
