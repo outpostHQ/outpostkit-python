@@ -50,8 +50,8 @@ class Endpoint(Namespace):
     def __init__(
         self,
         client: Client,
-        entity: Optional[str],
-        name: Optional[str],
+        entity: Optional[str] = None,
+        name: Optional[str] = None,
         full_name: Optional[str] = None,
     ) -> None:
         if name and entity:
@@ -63,7 +63,7 @@ class Endpoint(Namespace):
             assert len(_split) == 2, "Invalid Full Name"
             self.entity = _split[0]
             self.name = _split[1]
-            self.fullName = self.fullName
+            self.fullName = full_name
         else:
             raise OutpostError("Please provide identifiable information.")
 
