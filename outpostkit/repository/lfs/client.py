@@ -11,7 +11,16 @@ from . import exc, transfer, types
 
 FILE_READ_BUFFER_SIZE = 4 * 1024 * 1000  # 4mb, why not
 
+
 _log = logging.getLogger(__name__)
+_log.handlers.clear()
+file_handler = logging.FileHandler(
+    "lfs_client.log",  # maybe create a config dir at home, ~/.outpost
+)
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+)
+_log.addHandler(file_handler)
 
 
 class LfsClient:
@@ -22,7 +31,7 @@ class LfsClient:
         "multipart-basic": transfer.MultipartTransferAdapter,
     }
 
-    TRANSFER_ADAPTER_PRIORITY = ("multipart-basic", "basic")
+    TRANSFER_ADAPTER_PRIORITY = ["multipart-basic", "basic"]
 
     def __init__(
         self,
@@ -69,7 +78,13 @@ class LfsClient:
         return response.json()
 
     def upload(
-        self, file_obj: BinaryIO, organization: str, repo_type: str, repo: str, **extras
+        self,
+        file_obj: BinaryIO,
+        organization: str,
+        repo_type: str,
+        repo: str,
+        on_progress: Optional[Any] = None,
+        **extras,
     ) -> types.ObjectAttributes:
         """Upload a file to LFS storage"""
         object_attrs = self._get_object_attrs(file_obj)
@@ -85,7 +100,7 @@ class LfsClient:
                 "Unsupported transfer adapter: {}".format(response["transfer"])
             )
 
-        adapter.upload(file_obj, response["objects"][0])
+        adapter.upload(file_obj, response["objects"][0], on_progress)
         return object_attrs
 
     def download(

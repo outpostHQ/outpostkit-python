@@ -2,7 +2,7 @@
 import base64
 import hashlib
 import logging
-from typing import Any, BinaryIO, Dict, Optional, Union
+from typing import Any, BinaryIO, Callable, Dict, Optional, Union
 
 import requests
 
@@ -13,7 +13,10 @@ _log = logging.getLogger(__name__)
 
 class BasicTransferAdapter:
     def upload(
-        self, file_obj: BinaryIO, upload_spec: types.UploadObjectAttributes
+        self,
+        file_obj: BinaryIO,
+        upload_spec: types.UploadObjectAttributes,
+        on_progress: Callable[[int], int],
     ) -> None:
         try:
             ul_action = upload_spec["actions"]["upload"]
@@ -23,6 +26,7 @@ class BasicTransferAdapter:
         reply = requests.put(
             ul_action["href"], headers=ul_action.get("header", {}), data=file_obj
         )
+        ul_action.get("header", {})
         if reply.status_code // 100 != 2:
             raise RuntimeError(
                 "Unexpected reply from server for upload: {} {}".format(
@@ -65,7 +69,10 @@ class BasicTransferAdapter:
 
 class MultipartTransferAdapter(BasicTransferAdapter):
     def upload(
-        self, file_obj: BinaryIO, upload_spec: types.MultipartUploadObjectAttributes
+        self,
+        file_obj: BinaryIO,
+        upload_spec: types.MultipartUploadObjectAttributes,
+        on_progress: Callable[[int], int],
     ):
         """Do a multipart upload"""
         actions = upload_spec.get("actions")
@@ -86,10 +93,12 @@ class MultipartTransferAdapter(BasicTransferAdapter):
                 raise RuntimeError(
                     f"init failed with error status code: {response.status_code}"
                 )
-
+        completed_parts = []
         for p, part in enumerate(actions.get("parts", [])):
             _log.info("Uploading part %d/%d", p + 1, len(actions["parts"]))
-            self._send_part_request(file_obj, **part)
+            etag = self._send_part_request(file_obj, **part)
+            on_progress(part["size"])
+            completed_parts.append({"ETag": etag, "PartNumber": p + 1})
 
         commit_action = actions.get("commit")
         if commit_action:
@@ -98,7 +107,7 @@ class MultipartTransferAdapter(BasicTransferAdapter):
                 commit_action["href"],
                 method=commit_action.get("method", "POST"),
                 headers=commit_action.get("header", {}),
-                body=commit_action.get("body"),
+                json={"oid": upload_spec.get("oid"), "parts": completed_parts},
             )
             if response.status_code // 100 != 2:
                 raise RuntimeError(
@@ -143,6 +152,7 @@ class MultipartTransferAdapter(BasicTransferAdapter):
                     reply.status_code, reply.text
                 )
             )
+        return reply.headers.get("etag")
 
     @staticmethod
     def _send_request(
@@ -150,10 +160,15 @@ class MultipartTransferAdapter(BasicTransferAdapter):
         method: str,
         headers: Dict[str, str],
         body: Optional[Union[bytes, str]] = None,
+        json: Optional[Dict] = None,
     ) -> requests.Response:
         """Send an arbitrary HTTP request"""
         reply = requests.session().request(
-            method=method, url=url, headers=headers, data=body
+            method=method,
+            url=url,
+            headers=headers,
+            data=body,
+            json=json,
         )
         return reply
 
