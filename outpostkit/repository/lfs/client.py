@@ -2,7 +2,7 @@
 """
 import hashlib
 import logging
-from typing import Any, BinaryIO, Dict, List, Optional
+from typing import Any, BinaryIO, Callable, Dict, List, Optional
 
 import requests
 from six.moves import urllib_parse
@@ -83,7 +83,7 @@ class LfsClient:
         organization: str,
         repo_type: str,
         repo: str,
-        on_progress: Optional[Any] = None,
+        on_progress: Optional[Callable[[int], None]] = None,
         **extras,
     ) -> types.ObjectAttributes:
         """Upload a file to LFS storage"""

@@ -16,7 +16,7 @@ class BasicTransferAdapter:
         self,
         file_obj: BinaryIO,
         upload_spec: types.UploadObjectAttributes,
-        on_progress: Callable[[int], int],
+        on_progress: Optional[Callable[[int], None]] = None,
     ) -> None:
         try:
             ul_action = upload_spec["actions"]["upload"]
@@ -72,7 +72,7 @@ class MultipartTransferAdapter(BasicTransferAdapter):
         self,
         file_obj: BinaryIO,
         upload_spec: types.MultipartUploadObjectAttributes,
-        on_progress: Callable[[int], int],
+        on_progress: Optional[Callable[[int], None]] = None,
     ):
         """Do a multipart upload"""
         actions = upload_spec.get("actions")
@@ -97,7 +97,8 @@ class MultipartTransferAdapter(BasicTransferAdapter):
         for p, part in enumerate(actions.get("parts", [])):
             _log.info("Uploading part %d/%d", p + 1, len(actions["parts"]))
             etag = self._send_part_request(file_obj, **part)
-            on_progress(part["size"])
+            if on_progress:
+                on_progress(part["size"])
             completed_parts.append({"ETag": etag, "PartNumber": p + 1})
 
         commit_action = actions.get("commit")
