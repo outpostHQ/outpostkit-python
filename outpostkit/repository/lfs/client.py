@@ -1,26 +1,20 @@
 """A simple Git LFS client
 """
 import hashlib
-import logging
 from typing import Any, BinaryIO, Callable, Dict, List, Optional
 
 import requests
 from six.moves import urllib_parse
+
+from outpostkit.repository.lfs.logger import create_lfs_logger
 
 from . import exc, transfer, types
 
 FILE_READ_BUFFER_SIZE = 4 * 1024 * 1000  # 4mb, why not
 
 
-_log = logging.getLogger(__name__)
-_log.handlers.clear()
-file_handler = logging.FileHandler(
-    "lfs_client.log",  # maybe create a config dir at home, ~/.outpost
-)
-file_handler.setFormatter(
-    logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-)
-_log.addHandler(file_handler)
+
+_log = create_lfs_logger(__name__)
 
 
 class LfsClient:
