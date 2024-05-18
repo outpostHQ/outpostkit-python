@@ -1,14 +1,15 @@
 
 import base64
 import hashlib
-import logging
 from typing import Any, BinaryIO, Callable, Dict, Optional, Union
 
 import requests
 
+from outpostkit.repository.lfs.logger import create_lfs_logger
+
 from . import types
 
-_log = logging.getLogger(__name__)
+_log = create_lfs_logger(__name__)
 
 
 class BasicTransferAdapter:
