@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outpostkit"
-version = "0.0.61"
+version = "0.0.62"
 description = "Python client for Outpost"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -34,7 +34,7 @@ repository = "https://github.com/outposthq/outpostkit-python"
 testpaths = "tests/"
 
 [tool.setuptools]
-packages = ["outpostkit","outpostkit._types","outpostkit._utils","outpostkit.repository"]
+packages = ["outpostkit","outpostkit._types","outpostkit._utils","outpostkit.repository","outpostkit.repository.lfs"]
 
 [tool.setuptools.package-data]
 "outpostkit" = ["py.typed"]
