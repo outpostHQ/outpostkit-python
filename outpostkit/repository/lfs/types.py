@@ -1,7 +1,7 @@
 """Some useful type definitions for Git LFS API and transfer protocols
 """
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 if sys.version_info >= (3, 8):
     from typing import TypedDict
@@ -46,7 +46,7 @@ class DownloadObjectAttributes(TypedDict, total=False):
 class MultipartUploadActions(TypedDict, total=False):
     init: Dict[str, Any]
     commit: Dict[str, Any]
-    parts: List[Dict[str, Any]]
+    part: Dict[str, Any]
     abort: Dict[str, Any]
     verify: Dict[str, Any]
 

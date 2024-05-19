@@ -95,12 +95,15 @@ class MultipartTransferAdapter(BasicTransferAdapter):
                     f"init failed with error status code: {response.status_code}"
                 )
         completed_parts = []
-        for p, part in enumerate(actions.get("parts", [])):
-            _log.info("Uploading part %d/%d", p + 1, len(actions["parts"]))
-            etag = self._send_part_request(file_obj, **part)
-            if on_progress:
-                on_progress(part["size"])
-            completed_parts.append({"ETag": etag, "PartNumber": p + 1})
+        part_action = actions.get("part")
+        if part_action:
+            all_parts = part_action.get("parts", [])
+            for p, part in enumerate(all_parts):
+                _log.info("Uploading part %d/%d", p + 1, len(all_parts))
+                etag = self._send_part_request(file_obj, **part)
+                if on_progress:
+                    on_progress(part["size"])
+                completed_parts.append({"ETag": etag, "PartNumber": p + 1})
 
         commit_action = actions.get("commit")
         if commit_action:
