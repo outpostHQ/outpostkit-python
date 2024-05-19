@@ -1,7 +1,7 @@
 import logging
 import os
 
-log_file_path = os.path.expanduser("var/log/outpost/outpostkit.log")
+log_file_path = os.path.expanduser("/var/log/outpost/outpostkit.log")
 outpost_folder = os.path.dirname(log_file_path)
 if not os.path.exists(outpost_folder):
     # Create the ~/.outpost folder if it doesn't exist
