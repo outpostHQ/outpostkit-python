@@ -1,4 +1,3 @@
-
 import base64
 import hashlib
 from typing import Any, BinaryIO, Callable, Dict, Optional, Union
@@ -182,7 +181,9 @@ def calculate_digest_header(data: bytes, want_digest: str) -> Dict[str, str]:
     # type: (bytes, str) -> Dict[str, str]
     """TODO: Properly implement this"""
     if want_digest == "contentMD5":
-        digest = base64.b64encode(hashlib.md5(data).digest()).decode("ascii")  # type: str
+        digest = base64.b64encode(hashlib.md5(data).digest()).decode(
+            "ascii"
+        )  # type: str
         return {"Content-MD5": digest}
     else:
         raise RuntimeError(f"Don't know how to handle want_digest value: {want_digest}")

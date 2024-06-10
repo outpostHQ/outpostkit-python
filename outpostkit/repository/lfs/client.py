@@ -13,7 +13,6 @@ from . import exc, transfer, types
 FILE_READ_BUFFER_SIZE = 4 * 1024 * 1000  # 4mb, why not
 
 
-
 _log = create_lfs_logger(__name__)
 
 
